@@ -1,0 +1,8 @@
+REST API -JSON
+GET /quizes - list all quizes
+GET /quizes/1
+Get /quizes/2
+
+POST /quizes -create new quiz
+PATCH /quizes/1 - edit the quiz with id 1
+DELETE /quizes/1 -delte the user with id 1
