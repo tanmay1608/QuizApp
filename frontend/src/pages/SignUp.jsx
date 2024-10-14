@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const SignUp = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate=useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,9 +22,13 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8157/api/auth/signup', formData);
-      setSuccess('User registered successfully!');
+      const response = await axios.post('http://localhost:8157/api/admin/auth/register', formData);
+      setSuccess('Admin registered successfully!');
       setError('');
+      const token = response.data.token;
+      Cookies.set('token', token, { expires: 15, secure: true });
+      localStorage.setItem('role', response.data.role);
+
       console.log(response.data);
     } catch (error) {
         console.log(error);
@@ -47,7 +53,7 @@ const SignUp = () => {
             onChange={handleChange}
             placeholder="Name"
             required
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-green-300"
           />
 
           <input
@@ -57,7 +63,7 @@ const SignUp = () => {
             onChange={handleChange}
             placeholder="Email"
             required
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-green-300"
           />
 
           <input
@@ -67,12 +73,13 @@ const SignUp = () => {
             onChange={handleChange}
             placeholder="Password"
             required
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-green-300"
           />
 
           <button
             type="submit"
-            className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition"
+            style={{backgroundColor:"#317988"}}
+            className="w-full py-2  text-white rounded hover:bg-white transition"
           >
             Sign Up
           </button>
@@ -80,7 +87,7 @@ const SignUp = () => {
 
         <p className="text-sm text-center text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-500 hover:underline">
+          <Link to="/login" className=" hover:underline" style={{color:"#317988"}}>
             Login
           </Link>
         </p>

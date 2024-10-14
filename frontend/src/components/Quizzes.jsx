@@ -1,55 +1,67 @@
 import axios from "axios";
 import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import QuizCard from "./QuizCard";
 
 const Quizzes = () => {
   const quizzesData = useLoaderData();
   const navigate = useNavigate();
-  const isLoggedIn = localStorage.getItem("authToken");
+  const role = localStorage.getItem("role");
+  const [isDeleted,setIsDeleted]=useState(false);
+
+  const updateIsDeleted=()=>{
+    setIsDeleted(prev => !prev);
+  }
   console.log(quizzesData);
+  const title="quiz 1";
+  const category="Science";
+  const questions=[{
+    questionText:"question1",
+    options:["option1","option2","option3"],
+    correctOption:"option1"
+  }]
 
   const handleStartQuiz = (quizId) => {
-    console.log(isLoggedIn);
-    if (isLoggedIn) navigate(`/quiz/${quizId}`);
-    else navigate("/login");
+    
+    if (role === "user") navigate(`/quiz/${quizId}`);
+    else navigate("/register-user");
+    //navigate(`/quiz/${quizId}`);
   };
 
   const handleAddQuiz= async()=>{
+    navigate('/add-quiz');
     const token = localStorage.getItem('authToken');
 
-    try {
-        const response = await axios.post('http://localhost:8157/api/quizzes', {
-            title,
-            category,
-            questions,
-        }, {
-            headers: {
-                'Authorization': `Bearer ${token}`, 
-            },
-        });
-        console.log('Quiz created successfully:', response.data);
+    // try {
+    //     const response = await axios.post('http://localhost:8157/api/quizzes', {
+    //         title,
+    //         category,
+    //         questions,
+    //     }, {
+    //         headers: {
+    //             'Authorization': `Bearer ${token}`, 
+    //         },
+    //     });
+    //     console.log('Quiz created successfully:', response.data);
        
-    } catch (error) {
-        console.log(error.response ? error.response.data.message : "Failed to create quiz");
-    }
+    // } catch (error) {
+    //     console.log(error.response ? error.response.data.message : "Failed to create quiz");
+    // }
   }
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen  p-6"
+    >
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
         Available Quizzes
       </h1>
       <div className="mb-6 text-center">
-    <button
-      className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-700 transition"
-      onClick={() =>handleAddQuiz() } 
-    >
-      Add Quiz
-    </button>
-  </div>
 
+  </div>
+    {
+      quizzesData &&  
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {quizzesData.map((quiz) => (
-          <div
+        <div
             key={quiz._id}
             className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition"
           >
@@ -57,7 +69,7 @@ const Quizzes = () => {
               {quiz.title}
             </h2>
             <button
-              className="w-full py-2 bg-gray-300 text-gray-600 rounded hover:bg-gray-700 hover:text-white transition"
+              className="w-full py-2 bg-gray-300 text-gray-600 rounded hover:bg-green-600  hover:text-white transition"
               onClick={() => handleStartQuiz(quiz._id)}
             >
               Start Quiz
@@ -65,6 +77,8 @@ const Quizzes = () => {
           </div>
         ))}
       </div>
+    }
+      
       <div>
 
       </div>

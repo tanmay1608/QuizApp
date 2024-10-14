@@ -2,6 +2,7 @@ import {quizModel} from "../models/quizModel.js";
 
 export const createQuiz = async (req, res) => {
   const { title, category, questions } = req.body;
+  console.log(title, category,questions);
 
   if (!title || !category || !Array.isArray(questions)) {
     return res
@@ -22,10 +23,12 @@ export const createQuiz = async (req, res) => {
 };
 
 export const getAllQuizzes = async (req, res) => {
+
+  console.log("get all quizzes");
   try {
     const quizzes = await quizModel.find({});
     console.log("inside",quizzes)
-    res.json(quizzes);
+    res.status(200).json(quizzes);
   } catch (e) {
     res.status(500).json({ message: "Failed to fetch quizzes", e });
   }
@@ -46,3 +49,17 @@ export const getQuizById = async (req, res) => {
       res.status(500).json({ message: "Failed to fetch quiz", error }); 
     }
   };
+
+  export const deleteQuizById =async(req,res)=>{
+    const {id}=req.params;
+    console.log(id);
+    try{
+      const quiz=await quizModel.deleteOne({_id:id});
+      console.log(quiz);
+
+      res.status(200).json({message:"Quiz deleted successfuly"});
+    }
+    catch(e){
+      res.status(500).json({ message: "Failed to delete quiz", e }); 
+    }
+  }

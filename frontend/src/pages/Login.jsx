@@ -12,9 +12,12 @@ const Login = () => {
     e.preventDefault();
 
     try {
-        const response = await axios.post('http://localhost:8157/api/auth/login', { email, password });
+        const response = await axios.post('http://localhost:8157/api/admin/auth/login', { email, password });
         console.log('Login successful:', response.data);
-        localStorage.setItem('authToken', response.data.token);
+        
+        const token = response.data.token;
+        Cookies.set('token', token, { expires: 15, secure: true });
+        localStorage.setItem('role', response.data.role);
         
         navigate('/');
         
