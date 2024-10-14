@@ -1,25 +1,39 @@
 import express from "express";
-import quizzes from "./MOCK_DATA.json" assert { type: "json" };
-import { quizModel } from "./models/quizModel.js";
 import cors from "cors";
-import quizRoutes from "../backend/routes/quizRoutes.js"
-import userAuthRoutes from "../backend/routes/userAuthRoutes.js"
-import cookieParser from "cookie-parser"
+import quizRoutes from "../backend/routes/quizRoutes.js";
+import userAuthRoutes from "../backend/routes/userAuthRoutes.js";
+import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config();
 const app = express();
-const PORT = 8157;
+const PORT = 8000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      callback(null, origin);
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
-app.use(cookieParser);
-app.use("/api/user/",userAuthRoutes);
-app.use("/api/quizzes",quizRoutes);
+app.use(cookieParser());
+app.use("/api/user/", userAuthRoutes);
+app.use("/api/quizzes", quizRoutes);
 
 
+const connectDBAndStartServer = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URL);
+    console.log("mongoDb connected");
+    app.listen(process.env.PORT || 8000, () =>
+      console.log(`Server Started at POST: ${PORT}`)
+    );
+  } catch (e) {
+    console.log(e);
+  }
+};
 
-mongoose
-  .connect("mongodb://127.0.0.1:27017/quiz-app")
-  .then(() => console.log("mongoDb connected"))
-  .catch((err) => console.log("mongo err:", err));
-
-app.listen(PORT, () => console.log(`Server Started at POST: ${PORT}`));
+connectDBAndStartServer();

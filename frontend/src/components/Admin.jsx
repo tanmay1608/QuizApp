@@ -1,89 +1,78 @@
-import React, { useEffect, useState } from 'react'
-import Quizzes from './Quizzes'
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import QuizCard from './QuizCard';
+import React, { useEffect, useState } from "react";
+import Quizzes from "./Quizzes";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import QuizCard from "./QuizCard";
 
 const Admin = () => {
-    console.log("inside Admin");
-    const [quizzesData,setQuizzesData]=useState([]);
-    const navigate = useNavigate();
-    //const isLoggedIn = localStorage.getItem("authToken");
-    const [isDeleted,setIsDeleted]=useState(false);
-  
-    useEffect(()=>{
-        try {
-            const fetchData=async ()=>{
-                const quizzesData=await axios.get("http://localhost:8157/api/quizzes");
-                setQuizzesData(quizzesData.data);
-                console.log("data",quizzesData);
-            }
-            fetchData();
-        } catch (error) {
-            
-        }
-    },[]);
-    const updateIsDeleted=()=>{
-      setIsDeleted(prev => !prev);
+  const [quizzesData, setQuizzesData] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const quizzesData = await axios.get(
+          "http://localhost:8000/api/quizzes"
+        );
+        setQuizzesData(quizzesData.data);
+        console.log("data", quizzesData);
+      };
+      fetchData();
+    } catch (error) {
+      console.log(error);
     }
-    console.log(quizzesData);
-   
-  
-    const handleStartQuiz = (quizId) => {
-      //console.log(isLoggedIn);
-      // if (isLoggedIn) navigate(`/quiz/${quizId}`);
-      // else navigate("/login");
-      navigate(`/quiz/${quizId}`);
-    };
-  
-    const handleAddQuiz= async()=>{
-      navigate('/add-quiz');
-      const token = localStorage.getItem('authToken');
-  
-      // try {
-      //     const response = await axios.post('http://localhost:8157/api/quizzes', {
-      //         title,
-      //         category,
-      //         questions,
-      //     }, {
-      //         headers: {
-      //             'Authorization': `Bearer ${token}`, 
-      //         },
-      //     });
-      //     console.log('Quiz created successfully:', response.data);
-         
-      // } catch (error) {
-      //     console.log(error.response ? error.response.data.message : "Failed to create quiz");
-      // }
+  }, []);
+
+  const handleStartQuiz = (quizId) => {
+    navigate(`/quiz/${quizId}`);
+  };
+
+  const handleAddQuiz = async () => {
+    navigate("/add-quiz");
+  };
+
+  const handleDeleteQuiz = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/quizzes/${id}`);
+      setQuizzesData((prevQuizzes) =>
+        prevQuizzes.filter((quiz) => quiz._id !== id)
+      );
+      console.log("Quiz deleted successfully:", id);
+    } catch (error) {
+      console.error("Error deleting quiz:", error);
     }
-    return (
-      <div className="min-h-screen  p-6"
-      >
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Available Quizzes
-        </h1>
-        <div className="mb-6 text-center">
-      <button
-        className="py-2 px-4 bg-gray-600 text-white rounded hover:bg-green-600 hover:scale-105 transition-all duration-200 ease-in-out"
-        onClick={() =>handleAddQuiz() } 
-      >
-        Add Quiz
-      </button>
-    </div>
-      {
-        quizzesData &&  
+  };
+
+  return (
+    <div className="min-h-screen  p-6">
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        Available Quizzes
+      </h1>
+      <div className="mb-6 text-center">
+        <button
+          className="py-2 px-4 bg-gray-600 text-white rounded hover:bg-green-600 hover:scale-105 transition-all duration-200 ease-in-out"
+          onClick={() => handleAddQuiz()}
+        >
+          Add Quiz
+        </button>
+      </div>
+      {quizzesData.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {quizzesData.map((quiz) => (
-           <QuizCard key={quiz._id} quiz={quiz} handleStartQuiz={handleStartQuiz} updateIsDeleted={updateIsDeleted}/>
+            <QuizCard
+              key={quiz._id}
+              quiz={quiz}
+              handleStartQuiz={handleStartQuiz}
+              onDelete={handleDeleteQuiz}
+            />
           ))}
         </div>
-      }
-        
-        <div>
-  
-        </div>
-      </div>
-    );
-}
+      ) : (
+        <p className="text-center text-gray-600">No quizzes available.</p>
+      )}
+      <div></div>
+    </div>
+  );
+};
 
-export default Admin
+export default Admin;

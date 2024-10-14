@@ -1,196 +1,208 @@
 import axios from "axios";
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AddQuiz = () => {
-
-  const [title,setTitle]=useState("");
-  const [category,setCategory]=useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [questions, setQuestion] = useState([]);
-  const [currentQuestion, setCurrenQuestion] = useState("");
-  const [currentOptions, setCurrentOptions] = useState(["", "", "", ""]);
-  const [correctOption, setCorrectOption] = useState("");
+  const [formData, setFormData] = useState({
+    title: "",
+    category: "",
+    questions: [],
+    currentQuestion: "",
+    currentOptions: ["", "", "", ""],
+    correctOption: "",
+  });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  console.log(questions);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-  const handleFormSubmit=async (e)=>{
+  const handleOptionChange = (index, value) => {
+    setFormData((prev) => {
+      const newOptions = [...prev.currentOptions];
+      newOptions[index] = value;
+      return { ...prev, currentOptions: newOptions };
+    });
+  };
+
+  const validateForm = () => {
+    const { title, category, questions } = formData;
+    if (!title || !category) return "Title and category are required";
+    if (questions.length === 0) return "At least one question is required";
+    return null;
+  };
+
+  const handleAddQuestion = () => {
+    const { currentQuestion, currentOptions, correctOption } = formData;
+
+    if (
+      !currentQuestion ||
+      currentOptions.some((option) => option.trim() === "") ||
+      !correctOption
+    ) {
+      setErrorMessage("All fields for the question must be filled.");
+      return;
+    }
+
+    const newQuestion = {
+      questionText: currentQuestion,
+      options: currentOptions,
+      correctOption: correctOption,
+    };
+
+    setFormData((prev) => ({
+      ...prev,
+      questions: [...prev.questions, newQuestion],
+      currentQuestion: "",
+      currentOptions: ["", "", "", ""],
+      correctOption: "",
+    }));
+    setErrorMessage("");
+  };
+
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-      try {
-        const response = await axios.post('http://localhost:8157/api/quizzes', {
-            title,
-            category,
-            questions,
-        });
-        console.log('Quiz created successfully:', response.data);
-        navigate("/");
-       
-    } catch (error) {
-        console.log(error);
-        console.log(error.response ? error.response.data.message : "Failed to create quiz");
+    const validationError = validateForm();
+    if (validationError) {
+      setErrorMessage(validationError);
+      return;
     }
-  }
 
-  const reset = () => {
-    setCorrectOption("");
-    setCurrenQuestion("");
-    setCurrentOptions(["", "", "", ""]);
-  };
+    setLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
 
-  const handleTitleChange=(e)=>{
-    if(questions.length !== 0 ) return ;
-    setTitle(e.target.value)
-  }
-
-  const handleCategoryChange=(e)=>{
-    if(questions.length !== 0 ) return ;
-    setCategory(e.target.value);
-  }
-
-  const handleAddQuestion = (e) => {
-    if (!isOpen) {
-      setIsOpen(true);
-    } else {
-      setQuestion((prev) => {
-        if (questions.length === 1 && currentQuestion === "") {
-          reset();
-          return [
-            {
-              questionText: currentQuestion,
-              options: currentOptions,
-              correctOption: correctOption,
-            },
-          ];
-        }
-
-        reset();
-        return [
-          ...prev,
-          {
-            questionText: currentQuestion,
-            options: currentOptions,
-            correctOption: correctOption,
-          },
-        ];
+    try {
+      const response = await axios.post("http://localhost:8000/api/quizzes", {
+        title: formData.title,
+        category: formData.category,
+        questions: formData.questions,
       });
-      setIsOpen(false);
+      setSuccessMessage("Quiz created successfully!");
+      navigate("/"); 
+    } catch (error) {
+      setErrorMessage(
+        error.response ? error.response.data.message : "Failed to create quiz"
+      );
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
-    <div className="flex justify-center items-center w-full h-screen">
-      <form className="flex flex-col w-[500px] border border-black p-4 shadow-lg rounded-xl"
-      onSubmit={handleFormSubmit}
+    <div className="flex justify-center items-center w-full h-screen bg-gray-100">
+      <form
+        className="flex flex-col w-[500px] max-h-[80vh] bg-white border border-[#317988] shadow-lg rounded-lg p-6 overflow-y-auto"
+        onSubmit={handleFormSubmit}
       >
+        <h2 className="text-center text-3xl font-bold text-[#317988] mb-4">
+          Create a New Quiz
+        </h2>
+
+        {errorMessage && (
+          <div className="text-red-500 mb-2">{errorMessage}</div>
+        )}
+        {successMessage && (
+          <div className="text-green-500 mb-2">{successMessage}</div>
+        )}
+
         <input
-          className="p-2 m-2 text-center border text-black border-black"
+          className="p-3 mb-4 border border-[#317988] rounded focus:outline-none focus:ring focus:ring-[#317988] transition duration-200"
           type="text"
-          value={title}
-          onChange={(e)=> handleTitleChange(e)}
-          placeholder="title of your quiz"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          placeholder="Title of your quiz"
+          required
         />
         <input
-          className="p-2 m-2 text-center border text-black  border-black"
+          className="p-3 mb-4 border border-[#317988] rounded focus:outline-none focus:ring focus:ring-[#317988] transition duration-200"
           type="text"
-          value={category}
-          onChange={(e)=> handleCategoryChange(e)}
-          placeholder="category of your quiz"
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          placeholder="Category of your quiz"
+          required
         />
-        {isOpen && (
-          <div className="w-full">
-            <input
-              className="p-2 m-2 text-center border text-black border-black"
-              type="text"
-              value={currentQuestion}
-              placeholder="Enter your question"
-              onChange={(e) => setCurrenQuestion(e.target.value)}
-            />
-            <input
-              className="p-2 m-2 text-center border text-black border-black"
-              type="text"
-              value={currentOptions[0]}
-              placeholder="Enter option1"
-              onChange={(e) =>
-                setCurrentOptions((prev) => {
-                  console.log("prev", prev);
-                  const newOptions = [...prev];
-                  newOptions[0] = e.target.value;
-                  return newOptions;
-                })
-              }
-            />
 
-            <input
-              className="p-2 m-2 text-center border text-black border-black"
-              type="text"
-              value={currentOptions[1]}
-              placeholder="Enter option2"
-              onChange={(e) =>
-                setCurrentOptions((prev) => {
-                  console.log("prev", prev);
-                  const newOptions = [...prev];
-                  newOptions[1] = e.target.value;
-                  return newOptions;
-                })
-              }
-            />
-
-            <input
-              className="p-2 m-2 text-center border text-black border-black"
-              type="text"
-              value={currentOptions[2]}
-              placeholder="Enter option3"
-              onChange={(e) =>
-                setCurrentOptions((prev) => {
-                  console.log("prev", prev);
-                  const newOptions = [...prev];
-                  newOptions[2] = e.target.value;
-                  return newOptions;
-                })
-              }
-            />
-
-            <input
-              className="p-2 m-2 text-center border text-black border-black"
-              type="text"
-              value={currentOptions[3]}
-              placeholder="Enter option4"
-              onChange={(e) =>
-                setCurrentOptions((prev) => {
-                  console.log("prev", prev);
-                  const newOptions = [...prev];
-                  newOptions[3] = e.target.value;
-                  return newOptions;
-                })
-              }
-            />
-
-            <input
-              className="p-2 m-2 text-center border text-black border-black"
-              type="text"
-              value={correctOption}
-              placeholder="Enter correct option"
-              onChange={(e) => setCorrectOption(e.target.value)}
-            />
+        {formData.questions.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-[#317988] mb-2">
+              Questions:
+            </h3>
+            {formData.questions.map((q, index) => (
+              <div
+                key={index}
+                className="border p-2 mb-2 bg-gray-50 rounded shadow"
+              >
+                <p className="font-medium text-gray-800">
+                  <span className="font-semibold">Question:</span>{" "}
+                  {q.questionText}
+                </p>
+                <p className="text-gray-600">
+                  <span className="font-semibold">Options:</span>{" "}
+                  {q.options.join(", ")}
+                </p>
+                <p className="text-gray-600">
+                  <span className="font-semibold">Correct Option:</span>{" "}
+                  {q.correctOption}
+                </p>
+              </div>
+            ))}
           </div>
         )}
-        <div className="w-full flex justify-end p-2">
-          <div
-            className="cursor-pointer bg-green-700 py-2 px-4 rounded-lg font-bold text-white"
-            onClick={() => handleAddQuestion()}
-          >
-            {isOpen ? "Add now" : "Add question"}
-          </div>
-        </div>
-        <div className="flex justify-center w-full">
-          <button
-            type="submit"
-            className="bg-gray-600 text-gray-300 rounded-2xl w-60 py-3 m-2"
-          >
-            {" "}
-            Add Quiz
-          </button>
-        </div>
+
+        <input
+          className="p-3 mb-4 border border-[#317988] rounded focus:outline-none focus:ring focus:ring-[#317988] transition duration-200"
+          type="text"
+          name="currentQuestion" 
+          value={formData.currentQuestion}
+          placeholder="Enter your question"
+          onChange={handleChange} 
+        />
+        {formData.currentOptions.map((option, index) => (
+          <input
+            key={index}
+            className="p-3 mb-4 border border-[#317988] rounded focus:outline-none focus:ring focus:ring-[#317988] transition duration-200"
+            type="text"
+            value={option}
+            placeholder={`Enter option ${index + 1}`}
+            onChange={(e) => handleOptionChange(index, e.target.value)}
+          />
+        ))}
+        <input
+          className="p-3 mb-4 border border-[#317988] rounded focus:outline-none focus:ring focus:ring-[#317988] transition duration-200"
+          type="text"
+          name="correctOption" 
+          value={formData.correctOption}
+          placeholder="Enter correct option"
+          onChange={handleChange}
+        />
+
+        <button
+          type="button"
+          className="cursor-pointer bg-[#317988] hover:bg-[#2a6464] text-white py-2 px-4 rounded-lg font-bold transition duration-200"
+          onClick={handleAddQuestion}
+        >
+          Add Question
+        </button>
+
+        <button
+          type="submit"
+          className={`bg-[#317988] text-white rounded-lg w-full py-3 mt-4 font-semibold transition duration-200 ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={loading}
+        >
+          {loading ? "Creating..." : "Add Quiz"}
+        </button>
       </form>
     </div>
   );

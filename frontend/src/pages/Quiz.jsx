@@ -1,8 +1,13 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 
 const Quiz = () => {
   const quizData = useLoaderData();
+  const id=quizData._id;
+  const savedUser = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -20,9 +25,24 @@ const Quiz = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitted(true);
+    const score = calculateScore();
+    try {
+      await axios.post("http://localhost:8000/api/quizzes/submit", {
+        userId:savedUser?.id,
+        quizId: id,
+        score:score
+      });
+      console.log("Quiz submitted successfully.");
+    } catch (error) {
+      console.error("Error submitting quiz:", error);
+    }
   };
+
+  // const handleSubmit = () => {
+  //   setIsSubmitted(true);
+  // };
 
   const calculateScore = () => {
     return quizData.questions.filter((q) => q.correctOption === answers[q._id])
@@ -56,7 +76,7 @@ const Quiz = () => {
               <div key={option} className="flex items-center">
                 <input
                   type="radio"
-                  name={`question-${currentQuestionIndex}`} 
+                  name={`question-${currentQuestionIndex}`}
                   value={option}
                   checked={answers[currentQuestion._id] === option}
                   onChange={() => handleOptionSelect(option)}

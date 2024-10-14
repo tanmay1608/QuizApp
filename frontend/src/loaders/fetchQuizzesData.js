@@ -1,9 +1,6 @@
 import axios from "axios"
 
 export const fetchQuizzesData=async ()=>{
-    console.log("inside")
-    const quizzesData=await axios.get("http://localhost:8157/api/quizzes");
-    console.log("loader",quizzesData.data);
+    const quizzesData=await axios.get("http://localhost:8000/api/quizzes");;
     return quizzesData.data;
-    //return [];
 }

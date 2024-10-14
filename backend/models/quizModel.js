@@ -10,7 +10,12 @@ const quizSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, unique: true },
     category: { type: String, required: true },
-    questions: [questionSchema],    
+    questions: [questionSchema],  
+    takenBy: [
+      {
+        userId: { type: String }, 
+      },
+    ],  
   },
   { timestamps: true }
 );

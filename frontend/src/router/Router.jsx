@@ -5,12 +5,13 @@ import App from "../App"
 import Quiz from "../pages/Quiz"
 import { fetchSingleQuiz } from "../loaders/fetchSingleQuiz"
 import Login from "../pages/Login"
-import SignUp from "../pages/SignUp"
+import SignUp from "../pages/Register"
 import AddQuiz from "../components/AddQuiz"
 import Admin from "../components/Admin"
-import UserForm from "../components/UserForm"
+import UserForm from "../pages/Register"
 import AdminWrapper from "../pages/AdminWrapper"
 import UserLogin from "../pages/UserLogin"
+import Register from "../pages/Register"
 
 const allRoutes=createBrowserRouter([
     {
@@ -37,20 +38,12 @@ const allRoutes=createBrowserRouter([
                 }]
             },
             {
-                path:'login-user',
-                element:<UserLogin/>
-            },
-            {
-                path:'register-user',
-                element:<UserForm/>
-            },
-            {
                 path:'login',
                 element:<Login/>
             }
             ,{
-                path:'signup',
-                element:<SignUp/>
+                path:'register',
+                element:<Register/>
             },
             {
                 path:'add-quiz',

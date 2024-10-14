@@ -9,18 +9,21 @@ const userSchema = new mongoose.Schema(
     address:{type :String,},
     role: {
       type: String,
+       enum: ["admin", "user", "editor"], 
       default: "user",
       required:true
     },
+    quizzesTaken: [
+      {
+        quizId: { type: String }, 
+        score: { type: String },   
+      },
+    ],
   },
   { timestamps: true }
 );
 
-userSchema.pre("save", async function(next) {
-    if(!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password,10);
-    next();
-})
+
 
 
 export const userModel = mongoose.model("user", userSchema);

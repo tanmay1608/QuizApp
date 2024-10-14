@@ -1,29 +1,26 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import axios from "axios";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {useDispatch} from "react-redux";
+import { loginUser } from "../../redux/slice/userSlice";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const dispatch=useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-        const response = await axios.post('http://localhost:8157/api/admin/auth/login', { email, password });
-        console.log('Login successful:', response.data);
-        
-        const token = response.data.token;
-        Cookies.set('token', token, { expires: 15, secure: true });
-        localStorage.setItem('role', response.data.role);
-        
-        navigate('/');
-        
-      } catch (error) {
-        setError(error.response.data.message);
-      }
+      console.log(email, password);
+      dispatch(loginUser({email,password}));
+      navigate("/");
+    } catch (error) {
+      setError(error.response.data.message);
+    }
   };
 
   return (
@@ -66,12 +63,9 @@ const Login = () => {
           </button>
         </form>
         <p className="text-center mt-4">
-          Don't have an account?{' '}
-          <Link
-            to="/signup"
-            className="text-blue-500 hover:underline"
-          >
-            Sign up
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-500 hover:underline">
+            Register
           </Link>
         </p>
       </div>
