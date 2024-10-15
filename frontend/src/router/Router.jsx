@@ -18,6 +18,8 @@ import LeaderBoard from "../components/LeaderBoard"
 import { fetchLeaderboardData } from "../loaders/fetchLeaderboardData"
 import ProfileWrapper from "../pages/ProfileWrapper"
 import Profile from "../components/Profile"
+import { fetchUserInfo } from "../loaders/fetchUserInfo"
+import NotFound from "../pages/NotFound"
 
 const allRoutes=createBrowserRouter([
     {
@@ -75,14 +77,19 @@ const allRoutes=createBrowserRouter([
                 ]
             },
             {
-                path:'profile',
+                path:'profile/:id',
                 element:<ProfileWrapper/>,
                 children:[
                     {
                         index:true,
-                        element:<Profile/>
+                        element:<Profile/>,
+                        loader:fetchUserInfo
                     }
                 ]
+            }
+            ,{
+                path:'*',
+                element:<NotFound/>
             }
         ]
         

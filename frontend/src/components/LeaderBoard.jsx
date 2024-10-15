@@ -1,50 +1,74 @@
+import { useLoaderData, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useLoaderData, useParams } from "react-router-dom"
+import { FaCrown } from "react-icons/fa"; // Crown icon for #1 rank
 
 const LeaderBoard = () => {
-    const params=useParams();
-    const leaderboardData=useLoaderData();
-    const quizInfo=leaderboardData[1]?.value?.data;
-    const leaderboardInfo=leaderboardData[0]?.value?.data;
-    
-    
-    
+  const params = useParams();
+  const leaderboardData = useLoaderData();
+  const quizInfo = leaderboardData[1]?.value?.data;
+  const leaderboardInfo = leaderboardData[0]?.value?.data;
+
   return (
-    <div className="w-full h-screen flex justify-center mt-10"
-    >
-       {
-        leaderboardInfo.length === 0 ? <div className="">
-            <p className="text-2xl">No user has attempted this quiz yet. You can be the first to try it!</p>
-        </div> :  <div
-        
-
-        className="w-1/2  shadow-2xl flex flex-col relative ">
-        <p className="text-start p-5 pb-0 text-4xl font-bold">{quizInfo?.category}</p>
-        <p className="text-xl p-5 pt-0">{" "}{quizInfo?.title}</p>
-       
-        <div>
-            {
-                leaderboardInfo.map((data)=> (
-                    <div key={data.id} className="">
-                    <div  className="flex justify-between m-2 p-2">
-                        <p className="uppercase">{data.name}</p>
-                        <p>{data.email}</p>
-                        <p>{data.score}Pt.</p>
-                       
-                    </div>
-                    <div className="flex justify-center">
-                     <div className="w-[95%] border-t border-gray-300"></div>
-
-                    </div>
-                     </div>
-                ))
-            }
+    <div className="w-full h-screen flex justify-center items-start pt-12 bg-gradient-to-b from-gray-100 to-gray-300">
+      {leaderboardInfo.length === 0 ? (
+        <div className="text-center bg-white p-6 rounded-md shadow-xl">
+          <p className="text-2xl font-semibold text-gray-800">
+            No one has attempted this quiz yet.
+          </p>
+          <p className="text-lg text-gray-600 mt-2">
+            Be the first to take the quiz and claim the top spot!
+          </p>
         </div>
+      ) : (
+        <div className="w-4/5 md:w-1/2 bg-white rounded-3xl shadow-2xl p-8">
+          <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
+            {quizInfo?.category}
+          </h1>
+          <p className="text-lg text-gray-600 mb-8">{quizInfo?.title}</p>
+
+          <div className="space-y-6">
+            {leaderboardInfo.map((data, index) => (
+              <div
+                key={data.id}
+                className={`flex items-center justify-between p-5 rounded-lg ${
+                  index === 0
+                    ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white shadow-lg"
+                    : "bg-gray-50 hover:bg-gray-100"
+                }`}
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="text-3xl font-bold">
+                    {index === 0 ? (
+                      <FaCrown className="text-yellow-300" />
+                    ) : (
+                      `#${index + 1}`
+                    )}
+                  </div>
+                  <p
+                    className={`text-lg font-semibold uppercase ${
+                      index === 0 ? "text-white" : "text-gray-800"
+                    }`}
+                  >
+                    {data.name}
+                  </p>
+                </div>
+                <p className={`${index === 0 ? "text-gray-200" : "text-gray-600"}`}>
+                  {data.email}
+                </p>
+                <p
+                  className={`text-xl font-semibold ${
+                    index === 0 ? "text-white" : "text-blue-600"
+                  }`}
+                >
+                  {data.score*10} pts
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-       }
-      
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default LeaderBoard
+export default LeaderBoard;
