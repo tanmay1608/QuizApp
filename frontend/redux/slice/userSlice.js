@@ -5,7 +5,8 @@ import axios from 'axios';
 const initialState = {
     user: null,     
     isLoading:false, 
-    error: null      
+    error: null,
+    success:false      
 };
 
 export const loginUser = createAsyncThunk(
@@ -33,13 +34,21 @@ export const logoutUser=createAsyncThunk(
 const userSlice = createSlice({
     name: 'user',
     initialState,
-    reducers: {},
+    reducers: {
+
+      toggleSuccess:(state,action)=>{
+        state.success=false;
+      }
+    },
     extraReducers: (builder) => {
         builder.addCase(loginUser.pending, (state) => {
+          state.error=null;
           state.isLoading = true;
         });
         builder.addCase(loginUser.fulfilled, (state, action) => {
           state.isLoading = false;
+          state.error=null;
+          state.success=true;
           state.user = action.payload;
         });
         builder.addCase(loginUser.rejected, (state, action) => {
@@ -64,5 +73,5 @@ const userSlice = createSlice({
 });
 
 
-
+export const {toggleSuccess}=userSlice.actions;
 export default userSlice.reducer;

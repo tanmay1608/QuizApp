@@ -4,11 +4,11 @@ import { createQuiz, deleteQuizById, getAllQuizzes, getLeaderboard, getQuizById,
 
 const router=express.Router();
 
-router.post("/",createQuiz);
+router.post("/",authenticate,authorize,createQuiz);
 router.post('/submit', submitQuiz);
 router.get("/",getAllQuizzes);
 router.get("/:id", getQuizById);
-router.delete("/:id",deleteQuizById);
+router.delete("/:id",authenticate,authorize,deleteQuizById);
 router.get("/:id/leaderboard",getLeaderboard);
 
 export default router;

@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Quiz = () => {
   const quizData = useLoaderData();
@@ -11,7 +13,10 @@ const Quiz = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showToastify,setShowToastify]=useState(false);
   const currentQuestion = quizData.questions[currentQuestionIndex];
+
+  const notify = () => toast("Quiz submitted successfully!");
 
   const handleOptionSelect = (option) => {
     setAnswers((prev) => ({ ...prev, [currentQuestion._id]: option }));
@@ -34,6 +39,7 @@ const Quiz = () => {
         quizId: id,
         score:score
       });
+      notify();
       console.log("Quiz submitted successfully.");
     } catch (error) {
       console.error("Error submitting quiz:", error);
@@ -51,6 +57,7 @@ const Quiz = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
+      <ToastContainer />
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
         {quizData.title}
       </h1>

@@ -8,6 +8,23 @@ const Header = () => {
     ? JSON.parse(localStorage.getItem("user"))
     : null;
   const dispatch = useDispatch();
+  const user=useSelector((state)=>state.user);
+
+  let role=null;
+  let name=null;
+  if(user.user){
+    role=user.user.role;
+    name=user.user.name;
+  }
+  else{
+    if(savedUser !== null) {
+      role=savedUser?.role
+      name=savedUser?.name
+    }
+  }
+ 
+
+  
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -25,13 +42,20 @@ const Header = () => {
       </div>
       {}
       <div className="flex gap-4">
-        {savedUser?.role === "user" ? (
-          <button
-            className="px-4 py-2  text-gray-300 hover:text-white rounded-full   transition duration-200 ease-in-out shadow-md hover:scale-105"
+        {role === "user" ? (
+
+          <div className="flex">
+            <div className=" mx-2 flex justify-center items-center rounded-full w-[50px] h-[50px] bg-white">
+              <Link to={"/profile"}><span className="uppercase text-xl font-bold">{name.charAt(0)}</span></Link>
+            </div>
+                <button
+            className="px-4 py-2 bg-white font-semibold uppercase hover:text-black hover:font-semibold rounded-full   transition duration-200 ease-in-out shadow-md hover:scale-105"
             onClick={() => handleLogout()}
           >
             Log out
           </button>
+          </div>
+        
         ) : (
           <Link
             to="/admin"

@@ -12,6 +12,12 @@ import UserForm from "../pages/Register"
 import AdminWrapper from "../pages/AdminWrapper"
 import UserLogin from "../pages/UserLogin"
 import Register from "../pages/Register"
+import QuizWrapper from "../pages/QuizWrapper"
+import AddQuizWrapper from "../pages/AddQuizWrapper"
+import LeaderBoard from "../components/LeaderBoard"
+import { fetchLeaderboardData } from "../loaders/fetchLeaderboardData"
+import ProfileWrapper from "../pages/ProfileWrapper"
+import Profile from "../components/Profile"
 
 const allRoutes=createBrowserRouter([
     {
@@ -25,8 +31,21 @@ const allRoutes=createBrowserRouter([
             },
             {
                 path:'quiz/:id',
-                element:<Quiz/>,
-                loader: fetchSingleQuiz
+                element:<QuizWrapper/>,
+                children:[
+                    {
+                        index:true,
+                        element:<Quiz/>,
+                        loader: fetchSingleQuiz
+                    },
+                    {
+                        path:'leaderboard',
+                        element:<LeaderBoard/>,
+                        loader:fetchLeaderboardData
+                    }
+                    
+                ]
+                
                 
             },
             {
@@ -47,7 +66,23 @@ const allRoutes=createBrowserRouter([
             },
             {
                 path:'add-quiz',
-                element:<AddQuiz/>
+                element:<AddQuizWrapper/>,
+                children:[
+                    {
+                        path:'/add-quiz',
+                        element:<AddQuiz/>
+                    }
+                ]
+            },
+            {
+                path:'profile',
+                element:<ProfileWrapper/>,
+                children:[
+                    {
+                        index:true,
+                        element:<Profile/>
+                    }
+                ]
             }
         ]
         

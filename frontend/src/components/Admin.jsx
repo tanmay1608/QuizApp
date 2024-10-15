@@ -33,7 +33,7 @@ const Admin = () => {
 
   const handleDeleteQuiz = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/quizzes/${id}`);
+      await axios.delete(`http://localhost:8000/api/quizzes/${id}` ,{withCredentials:true});
       setQuizzesData((prevQuizzes) =>
         prevQuizzes.filter((quiz) => quiz._id !== id)
       );

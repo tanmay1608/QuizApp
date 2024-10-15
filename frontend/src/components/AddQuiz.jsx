@@ -16,6 +16,9 @@ const AddQuiz = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+
+  console.log("inside add quiz");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -84,7 +87,7 @@ const AddQuiz = () => {
         title: formData.title,
         category: formData.category,
         questions: formData.questions,
-      });
+      },{withCredentials:true});
       setSuccessMessage("Quiz created successfully!");
       navigate("/"); 
     } catch (error) {

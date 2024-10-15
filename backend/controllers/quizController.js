@@ -1,5 +1,6 @@
 import { quizModel } from "../models/quizModel.js";
 import { userModel } from "../models/userModel.js";
+import { v4 as uuidv4 } from 'uuid';
 
 export const createQuiz = async (req, res) => {
   const { title, category, questions } = req.body;
@@ -98,27 +99,35 @@ export const submitQuiz = async (req, res) => {
 };
 
 export const getLeaderboard = async (req, res) => {
-  const { quizId } = req.params;
+  const {id} = req.params;
 
   try {
-    const users = await userModel.find({});
-    const filteredUsers = users.filter(user => {
-      if(user.role === "admin") return false;
-      const arr=user.quizzesTaken.filter(entry => entry.quizId === quizId);
-      return arr;
-    });
+  
+   const quiz=await quizModel.findById(id);
+   if(!quiz) return res.status(404).json({ message: "Quiz not found" });
+  
     
-    const leaderboard = filteredUsers.map((user) => {
-      const quizScoreEntry = user.quizzesTaken.find(
-        (entry) => entry.quizId === quizId
-      );
-      return {
-        name: user.name,
-        score: quizScoreEntry ? quizScoreEntry.score : 0,
-      };
+    
+    const leaderboard =  quiz.takenBy.map(async (user) => {
+        const existingUser=await getUser(user.userId);
+        
+        
+      if(existingUser){
+        const quizInfo= existingUser.quizzesTaken.find((quiz)=> quiz.quizId === id);
+        return {
+          id:uuidv4(),
+          name:existingUser.name,
+          email:existingUser.email,
+          score:quizInfo?.score ? quizInfo?.score : 0
+        }
+      }
+
+    })
+    const leaderScore=(await Promise.all(leaderboard)).filter((el)=> {
+      return el!== undefined;
     });
 
-    const sortedLeaderboard = leaderboard.sort((a, b) => b.score - a.score);
+     const sortedLeaderboard = leaderScore.sort((a, b) => b.score - a.score);
 
     res.status(200).json(sortedLeaderboard);
   } catch (error) {
@@ -126,3 +135,9 @@ export const getLeaderboard = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch leaderboard" });
   }
 };
+
+const getUser=async (id)=>{
+  const existingUser=await userModel.findById(id);
+  console.log(existingUser);
+  return existingUser;
+}
