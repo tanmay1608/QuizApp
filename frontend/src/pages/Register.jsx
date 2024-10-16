@@ -18,9 +18,27 @@ const Register = () => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
       };
+
+     
+        const validateForm = () => {
+          const {name,email,password,address} = formData;
+          console.log("inside validation");
+          if(!name || !email || !password || !address) return "All fields are required";
+          return null;
+        };
+      
     
       const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        
+        const validationError = validateForm();
+        if (validationError) {
+          setError(validationError);
+          return;
+        }
+        //return ;
+
         try {
           const response = await axios.post('http://localhost:8000/api/user/register', formData,{withCredentials:true});
           setSuccess('User registered successfully!');

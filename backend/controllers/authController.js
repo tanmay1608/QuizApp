@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export const register = async (req, res) => {
   const { email, password, address, name } = req.body;
+  console.log(email,password,address,name);
 
   try {
     const existingUser = await userModel.findOne({ email });
@@ -50,12 +51,13 @@ export const login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: "2h",
+      expiresIn: "1d",
     });
 
     res.cookie("authToken", token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24,
+      secure:true
     });
 
     res.status(200).json({

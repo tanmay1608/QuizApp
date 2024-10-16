@@ -6,7 +6,7 @@ const initialState = {
     user: null,     
     isLoading:false, 
     error: null,
-    success:false      
+    success:null      
 };
 
 export const loginUser = createAsyncThunk(
@@ -26,6 +26,7 @@ export const logoutUser=createAsyncThunk(
         const response = await axios.post("http://localhost:8000/api/user/logout", {},
             { withCredentials: true }
           );
+          console.log("inside thunk")
           localStorage.removeItem("user");
           return response.data;
     }
@@ -37,7 +38,7 @@ const userSlice = createSlice({
     reducers: {
 
       toggleSuccess:(state,action)=>{
-        state.success=false;
+        state.success=null;
       }
     },
     extraReducers: (builder) => {
@@ -48,7 +49,7 @@ const userSlice = createSlice({
         builder.addCase(loginUser.fulfilled, (state, action) => {
           state.isLoading = false;
           state.error=null;
-          state.success=true;
+          state.success="loggedIn";
           state.user = action.payload;
         });
         builder.addCase(loginUser.rejected, (state, action) => {
@@ -63,6 +64,8 @@ const userSlice = createSlice({
           builder.addCase(logoutUser.fulfilled, (state, action) => {
             state.isLoading = false;
             state.user = [];
+            state.error=null;
+            state.success="loggedOut";
           });
           builder.addCase(logoutUser.rejected, (state, action) => {
             state.isLoading = false;

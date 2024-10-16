@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../redux/slice/userSlice";
 
@@ -8,6 +8,7 @@ const Header = () => {
     ? JSON.parse(localStorage.getItem("user"))
     : null;
   const dispatch = useDispatch();
+  const navigate=useNavigate();
   const user = useSelector((state) => state.user);
 
   let role = null;
@@ -27,6 +28,8 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    navigate("/");
+    
   };
 
   return (
@@ -48,12 +51,12 @@ const Header = () => {
               </Link>
             </div>
 
-            <button
+            {/* <button
               onClick={handleLogout}
               className="px-5 py-2 bg-white text-teal-600 font-semibold uppercase rounded-full shadow-md transition-all hover:bg-teal-400 hover:text-white hover:scale-105"
             >
               Log out
-            </button>
+            </button> */}
           </div>
         ) : (
           <Link
@@ -63,6 +66,14 @@ const Header = () => {
             Admin
           </Link>
         )}
+        {
+          role &&   <button
+          onClick={handleLogout}
+          className="px-5 py-2 bg-white text-teal-600 font-semibold uppercase rounded-full shadow-md transition-all hover:bg-teal-400 hover:text-white hover:scale-105"
+        >
+          Log out
+        </button>
+        }
       </div>
     </header>
   );

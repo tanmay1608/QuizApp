@@ -18,9 +18,18 @@ const Quizzes = () => {
     ? JSON.parse(localStorage.getItem("user"))
     : null;
 
+
+  useEffect(()=>{
+      if(!savedUser){
+        setSelectedCategory(null);
+        setUserInfo(null);
+      }
+  },[savedUser])
+
+console.log(success);
   useEffect(() => {
     if (success) {
-      notify();
+      notify(success);
       dispatch(toggleSuccess());
     }
   }, [success]);
@@ -47,7 +56,10 @@ const Quizzes = () => {
     else navigate("/register");
   };
 
-  const notify = () => toast("Logged In successfully");
+  const notify = (state) => {
+    if(state === "loggedIn") toast("Logged In successfully")
+      else toast("Logged Out successfully")
+  }
 
   const groupedQuizzes = {};
   quizzesData.forEach((quiz) => {
@@ -68,10 +80,10 @@ const Quizzes = () => {
         {Object.keys(groupedQuizzes).map((category, index) => (
           <div
             key={category}
-            className={`mx-4 p-4 rounded-lg shadow-md  bg-gradient-to-r from-teal-300 to-cyan-400 mb-10 hover:scale-105 transition-all duration-300 ease-in-out`}
+            className={`mx-4 px-4 py-7 rounded-lg shadow-md  bg-gradient-to-r from-teal-300 to-cyan-400 mb-10 hover:scale-105 transition-all duration-300 ease-in-out`}
           >
             <button
-              className="w-full px-4 py-2 text-white rounded hover:bg-opacity-80 transition-all duration-200"
+              className="w-full px-4 py-2 text-white font-bold rounded hover:bg-opacity-80 transition-all duration-200"
               onClick={() => setSelectedCategory(category)}
             >
               {category}
@@ -117,7 +129,7 @@ const Quizzes = () => {
                       You Scored:
                     </p>
                     <p className="text-4xl font-extrabold text-green-500 mb-10">
-                      {isAttempted.score} Points
+                      {isAttempted.score*10} Points
                     </p>
                   </div>
                 )}

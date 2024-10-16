@@ -5,8 +5,6 @@ import { MdDelete } from "react-icons/md";
 const QuizCard = ({ quiz, onDelete }) => {
   const [error, setError] = useState(null);
 
- 
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
       {error && <p className="text-red-500">{error}</p>}
