@@ -16,9 +16,6 @@ const AddQuiz = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-
-  console.log("inside add quiz");
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -83,13 +80,17 @@ const AddQuiz = () => {
     setSuccessMessage("");
 
     try {
-      const response = await axios.post("http://localhost:8000/api/quizzes", {
-        title: formData.title,
-        category: formData.category,
-        questions: formData.questions,
-      },{withCredentials:true});
+      const response = await axios.post(
+        "http://localhost:8000/api/quizzes",
+        {
+          title: formData.title,
+          category: formData.category,
+          questions: formData.questions,
+        },
+        { withCredentials: true }
+      );
       setSuccessMessage("Quiz created successfully!");
-      navigate("/"); 
+      navigate("/");
     } catch (error) {
       setErrorMessage(
         error.response ? error.response.data.message : "Failed to create quiz"
@@ -100,113 +101,110 @@ const AddQuiz = () => {
   };
 
   return (
-    <div className="flex justify-center items-center w-full h-screen bg-gray-100">
-      <form
-        className="flex flex-col w-[500px] max-h-[80vh] bg-white border border-[#317988] shadow-lg rounded-lg p-6 overflow-y-auto"
-        onSubmit={handleFormSubmit}
-      >
-        <h2 className="text-center text-3xl font-bold text-[#317988] mb-4">
-          Create a New Quiz
-        </h2>
+    <div className="flex h-full bg-gradient-to-br from-[#fbc2b3] to-[#f89f2b]">
+      <div className="flex-grow flex items-center justify-center p-4 sm:p-8">
+        <form
+          className="flex flex-col w-full max-w-lg bg-white rounded-lg shadow-lg p-6 sm:p-8"
+          onSubmit={handleFormSubmit}
+        >
+          <h2 className="text-center text-3xl font-extrabold text-[#f89f2b] mb-6">
+            Create Your Quiz
+          </h2>
 
-        {errorMessage && (
-          <div className="text-red-500 mb-2">{errorMessage}</div>
-        )}
-        {successMessage && (
-          <div className="text-green-500 mb-2">{successMessage}</div>
-        )}
+          {errorMessage && (
+            <div className="text-red-600 mb-2 text-sm">{errorMessage}</div>
+          )}
+          {successMessage && (
+            <div className="text-green-600 mb-2 text-sm">{successMessage}</div>
+          )}
 
-        <input
-          className="p-3 mb-4 border border-[#317988] rounded focus:outline-none focus:ring focus:ring-[#317988] transition duration-200"
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Title of your quiz"
-          required
-        />
-        <input
-          className="p-3 mb-4 border border-[#317988] rounded focus:outline-none focus:ring focus:ring-[#317988] transition duration-200"
-          type="text"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          placeholder="Category of your quiz"
-          required
-        />
-
-        {formData.questions.length > 0 && (
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-[#317988] mb-2">
-              Questions:
-            </h3>
-            {formData.questions.map((q, index) => (
-              <div
-                key={index}
-                className="border p-2 mb-2 bg-gray-50 rounded shadow"
-              >
-                <p className="font-medium text-gray-800">
-                  <span className="font-semibold">Question:</span>{" "}
-                  {q.questionText}
-                </p>
-                <p className="text-gray-600">
-                  <span className="font-semibold">Options:</span>{" "}
-                  {q.options.join(", ")}
-                </p>
-                <p className="text-gray-600">
-                  <span className="font-semibold">Correct Option:</span>{" "}
-                  {q.correctOption}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <input
-          className="p-3 mb-4 border border-[#317988] rounded focus:outline-none focus:ring focus:ring-[#317988] transition duration-200"
-          type="text"
-          name="currentQuestion" 
-          value={formData.currentQuestion}
-          placeholder="Enter your question"
-          onChange={handleChange} 
-        />
-        {formData.currentOptions.map((option, index) => (
           <input
-            key={index}
-            className="p-3 mb-4 border border-[#317988] rounded focus:outline-none focus:ring focus:ring-[#317988] transition duration-200"
+            className="p-3 mb-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#f89f2b] transition duration-200"
             type="text"
-            value={option}
-            placeholder={`Enter option ${index + 1}`}
-            onChange={(e) => handleOptionChange(index, e.target.value)}
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Quiz Title"
+            required
           />
-        ))}
-        <input
-          className="p-3 mb-4 border border-[#317988] rounded focus:outline-none focus:ring focus:ring-[#317988] transition duration-200"
-          type="text"
-          name="correctOption" 
-          value={formData.correctOption}
-          placeholder="Enter correct option"
-          onChange={handleChange}
-        />
+          <input
+            className="p-3 mb-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#f89f2b] transition duration-200"
+            type="text"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            placeholder="Quiz Category"
+            required
+          />
 
-        <button
-          type="button"
-          className="cursor-pointer bg-[#317988] hover:bg-[#2a6464] text-white py-2 px-4 rounded-lg font-bold transition duration-200"
-          onClick={handleAddQuestion}
-        >
-          Add Question
-        </button>
+          <div className="mb-4">
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+              Questions
+            </h3>
+            {formData.questions.length > 0 ? (
+              formData.questions.map((q, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-300 p-4 mb-2 bg-gray-50 rounded-lg shadow-sm"
+                >
+                  <p className="font-medium text-gray-800">
+                    {index + 1}. {q.questionText}
+                  </p>
+                  <p className="text-gray-600">Options: {q.options.join(", ")}</p>
+                  <p className="text-gray-600">Correct: {q.correctOption}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500">No questions added yet.</p>
+            )}
+          </div>
 
-        <button
-          type="submit"
-          className={`bg-[#317988] text-white rounded-lg w-full py-3 mt-4 font-semibold transition duration-200 ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={loading}
-        >
-          {loading ? "Creating..." : "Add Quiz"}
-        </button>
-      </form>
+          <input
+            className="p-3 mb-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#f89f2b] transition duration-200"
+            type="text"
+            name="currentQuestion"
+            value={formData.currentQuestion}
+            placeholder="Enter your question"
+            onChange={handleChange}
+          />
+          {formData.currentOptions.map((option, index) => (
+            <input
+              key={index}
+              className="p-3 mb-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#f89f2b] transition duration-200"
+              type="text"
+              value={option}
+              placeholder={`Option ${index + 1}`}
+              onChange={(e) => handleOptionChange(index, e.target.value)}
+            />
+          ))}
+          <input
+            className="p-3 mb-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#f89f2b] transition duration-200"
+            type="text"
+            name="correctOption"
+            value={formData.correctOption}
+            placeholder="Correct option"
+            onChange={handleChange}
+          />
+
+          <button
+            type="button"
+            className="bg-[#f89f2b] text-white rounded-lg w-full py-3 mt-4 font-bold hover:bg-[#f89f2b] transition duration-200"
+            onClick={handleAddQuestion}
+          >
+            Add Question
+          </button>
+
+          <button
+            type="submit"
+            className={`bg-[#f89f2b] text-white rounded-lg w-full py-3 mt-4 font-bold hover:bg-[#e38a00] transition duration-200 ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={loading}
+          >
+            {loading ? "Creating..." : "Create Quiz"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

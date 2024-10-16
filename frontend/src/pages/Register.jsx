@@ -54,9 +54,9 @@ const Register = () => {
       };
     
       return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-          <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
-            <h2 className="text-2xl font-bold text-center">User Data</h2>
+        <div className="flex items-center justify-center min-h-screen bg-[#0b0e15]">
+          <div className="w-full max-w-md p-8 space-y-6 bg-[#181b22] rounded shadow-md">
+            <h2 className="text-2xl font-bold text-center text-[#f89f2b]">User Data</h2>
     
             {error && <p className="text-red-500 text-center">{error}</p>}
             {success && <p className="text-green-500 text-center">{success}</p>}
@@ -69,7 +69,7 @@ const Register = () => {
                 onChange={handleChange}
                 placeholder="Name"
                 required
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-gray-200"
+                className="w-full px-3 py-2  bg-[#313237] rounded text-white "
               />
     
               <input
@@ -79,7 +79,7 @@ const Register = () => {
                 onChange={handleChange}
                 placeholder="Email"
                 required
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-gray-200"
+                 className="w-full px-3 py-2  bg-[#313237] rounded text-white"
               />
     
               <input
@@ -89,21 +89,20 @@ const Register = () => {
                 onChange={handleChange}
                 placeholder="Password"
                 required
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-gray-200"
+                 className="w-full px-3 py-2  bg-[#313237] rounded text-white"
               />
-              <textarea name="address" value={formData.address} placeholder="Address" cols={30} rows={4} onChange={handleChange} required  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-gray-200"/>
+              <textarea name="address" value={formData.address} placeholder="Address" cols={30} rows={4} onChange={handleChange} required  className="w-full px-3 py-2 text-white  rounded bg-[#313237]"/>
     
               <button
                 type="submit"
-                style={{backgroundColor:"#317988"}}
-                className="w-full py-2  text-white rounded hover:bg-white transition"
+                className="w-full py-2   text-[#313237] bg-white rounded hover:bg-[#f89f2b] hover:text-white transition"
               >
                 Register
               </button>
             </form>
             <p className="text-sm text-center text-gray-600">
           Already regsistered?{' '}
-          <Link to="/login" className=" hover:underline" style={{color:"#317988"}}>
+          <Link to="/login" className=" hover:underline" style={{color:"#eb6e1d"}}>
             Login
           </Link>
         </p>

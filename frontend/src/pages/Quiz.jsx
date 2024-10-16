@@ -56,7 +56,7 @@ const Quiz = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
       <ToastContainer />
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
         {quizData.title}
@@ -66,14 +66,14 @@ const Quiz = () => {
       </h2>
 
       {isSubmitted ? (
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-6 rounded-lg shadow-md ">
           <h2 className="text-2xl font-semibold mb-4">Quiz Results</h2>
           <p className="text-lg">
             You scored {calculateScore()} out of {quizData.questions.length}.
           </p>
         </div>
       ) : (
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-6 rounded-lg shadow-md ">
           <h2 className="text-xl font-semibold mb-4">
             {currentQuestionIndex + 1}. {currentQuestion.questionText}
           </h2>

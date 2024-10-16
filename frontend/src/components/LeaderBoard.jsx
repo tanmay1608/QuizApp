@@ -7,6 +7,10 @@ const LeaderBoard = () => {
   const leaderboardData = useLoaderData();
   const quizInfo = leaderboardData[1]?.value?.data;
   const leaderboardInfo = leaderboardData[0]?.value?.data;
+  const user = localStorage.getItem("user");
+  let currentUserEmail = null;
+  if (user) currentUserEmail = JSON.parse(user).email;
+  console.log(leaderboardInfo[0]);
 
   return (
     <div className="w-full h-screen flex justify-center items-start pt-12 bg-gradient-to-b from-gray-100 to-gray-300">
@@ -31,7 +35,11 @@ const LeaderBoard = () => {
               <div
                 key={data.id}
                 className={`flex items-center justify-between p-5 rounded-lg ${
-                  index === 0
+                  data.email === currentUserEmail
+                    ? index === 0
+                      ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white shadow-lg"
+                      : "bg-green-300 text-white shadow-lg"
+                    : index === 0
                     ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white shadow-lg"
                     : "bg-gray-50 hover:bg-gray-100"
                 }`}
@@ -46,21 +54,35 @@ const LeaderBoard = () => {
                   </div>
                   <p
                     className={`text-lg font-semibold uppercase ${
-                      index === 0 ? "text-white" : "text-gray-800"
+                      data.id === currentUserEmail
+                        ? "text-white"
+                        : index === 0
+                        ? "text-white"
+                        : "text-gray-800"
                     }`}
                   >
                     {data.name}
                   </p>
                 </div>
-                <p className={`${index === 0 ? "text-gray-200" : "text-gray-600"}`}>
+                <p
+                  className={`${
+                    data.id === currentUserEmail
+                      ? "text-gray-200"
+                      : "text-gray-600"
+                  }`}
+                >
                   {data.email}
                 </p>
                 <p
                   className={`text-xl font-semibold ${
-                    index === 0 ? "text-white" : "text-blue-600"
+                    data.id === currentUserEmail
+                      ? "text-white"
+                      : index === 0
+                      ? "text-white"
+                      : "text-blue-600"
                   }`}
                 >
-                  {data.score*10} pts
+                  {data.score * 10} pts
                 </p>
               </div>
             ))}

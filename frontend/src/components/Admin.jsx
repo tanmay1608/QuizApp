@@ -34,7 +34,9 @@ const Admin = () => {
 
   const handleDeleteQuiz = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/quizzes/${id}` ,{withCredentials:true});
+      await axios.delete(`http://localhost:8000/api/quizzes/${id}`, {
+        withCredentials: true,
+      });
       setQuizzesData((prevQuizzes) =>
         prevQuizzes.filter((quiz) => quiz._id !== id)
       );
@@ -44,6 +46,17 @@ const Admin = () => {
     }
   };
 
+  const gradients = [
+    "bg-gradient-to-br from-[#007675] via-[#065555] to-[#023836]",
+    "bg-gradient-to-br from-[#182a5f] via-[#121f42] to-[#0f1730]",
+    "bg-gradient-to-br from-[#9e6130] via-[#874613] to-[#672404]",
+    "bg-gradient-to-br from-[#218589] via-[#236a71] to-[#2f515b]",
+  ];
+
+  function getRandomGradient() {
+    return gradients[Math.floor(Math.random() * gradients.length)];
+  }
+
   const groupedQuizzes = {};
   quizzesData.forEach((quiz) => {
     if (!groupedQuizzes[quiz.category]) {
@@ -51,11 +64,15 @@ const Admin = () => {
     }
     groupedQuizzes[quiz.category].push(quiz);
   });
- 
+
+  const colors = ['#FFD700', '#FFA500', '#FF69B4', '#87CEFA', '#90EE90']; // Yellow, Orange, Pink, Sky Blue, Light Green
+
+  // Function to get a random color from the array
+  const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
   return (
-    <div className="min-h-screen  p-6">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+    <div className="min-h-screen  p-6 bg-[#0b0e15]">
+      <h1 className="text-3xl font-bold text-center text-gray-400 mb-8">
         Quiz Categories
       </h1>
       <div className="mb-6 text-center">
@@ -67,40 +84,38 @@ const Admin = () => {
         </button>
       </div>
       <div className="w-full flex justify-center items-center mt-10">
-      <div className=" flex justify-center items-center">
-        {Object.keys(groupedQuizzes).map((category, index) => (
-          <div
-            key={category}
-            className={`w-60 h-40  mx-4 px-4 py-7 rounded-lg shadow-md  bg-gradient-to-r from-teal-300 to-cyan-400 mb-10 hover:scale-105 transition-all duration-300 ease-in-out flex items-center`}
-          >
-            <button
-              className="w-full px-4 py-2 text-white font-bold rounded hover:bg-opacity-80 transition-all duration-200"
-              onClick={() => setSelectedCategory(category)}
+        <div className=" flex justify-center items-center  flex-wrap">
+          {Object.keys(groupedQuizzes).map((category, index) => (
+            <div
+              key={category}
+             
+              className={`w-40 h-48 mx-4 rounded-lg shadow-xl bg-[#181b22]     mb-10 hover:scale-105 hover:bg-[#f89f2b] transition-all duration-500 ease-in-out flex items-center justify-center border border-transparent backdrop-blur-lg`}
             >
-              {category}
-            </button>
-          </div>
-        ))}
+              <button
+                className="w-full px-4 py-2 text-white font-bold rounded hover:bg-opacity-80 transition-all duration-200"
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
-      </div>
-      
-     
-        {
-         selectedCategory && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
-            {
-              groupedQuizzes[selectedCategory].map((quiz)=>{
-                return <QuizCard
+
+      {selectedCategory && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
+          {groupedQuizzes[selectedCategory].map((quiz) => {
+            return (
+              <QuizCard
                 key={quiz._id}
                 quiz={quiz}
                 handleStartQuiz={handleStartQuiz}
                 onDelete={handleDeleteQuiz}
               />
-            })
-            }
-          </div>
-         )
-        }
+            );
+          })}
+        </div>
+      )}
       {/* {quizzesData.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {quizzesData.map((quiz) => (
@@ -115,7 +130,6 @@ const Admin = () => {
       ) : (
         <p className="text-center text-gray-600">No quizzes available.</p>
       )} */}
-     
     </div>
   );
 };

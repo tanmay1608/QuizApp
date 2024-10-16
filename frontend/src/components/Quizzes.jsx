@@ -70,17 +70,17 @@ console.log(success);
   });
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-[#0b0e15] p-6">
       <ToastContainer />
-      <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-12">
+      <h1 className="text-4xl font-extrabold text-center text-gray-400 mb-12">
         Available Quizzes
       </h1>
 
-      <div className="mb-6 flex justify-center">
+      <div className="mb-6 flex justify-center flex-wrap items-center ">
         {Object.keys(groupedQuizzes).map((category, index) => (
           <div
             key={category}
-            className={`mx-4 px-4 py-7 rounded-lg shadow-md  bg-gradient-to-r from-teal-300 to-cyan-400 mb-10 hover:scale-105 transition-all duration-300 ease-in-out`}
+            className={`w-60 mx-2 h-48 px-4 py-7 rounded-lg shadow-md  bg-[#19b4fa] mb-10 hover:scale-105 transition-all duration-300 ease-in-out flex items-center`}
           >
             <button
               className="w-full px-4 py-2 text-white font-bold rounded hover:bg-opacity-80 transition-all duration-200"
@@ -92,7 +92,7 @@ console.log(success);
         ))}
       </div>
       {selectedCategory ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
           {groupedQuizzes[selectedCategory].map((quiz) => {
             const isAttempted = userInfo?.quizzesTaken.find(
               (q) => q?.quiz?.id === quiz._id
