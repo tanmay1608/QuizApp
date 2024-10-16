@@ -9,7 +9,7 @@ export const createQuiz = async (req, res) => {
   if (!title || !category || !Array.isArray(questions)) {
     return res
       .status(400)
-      .json({ message: "Title, category, and questions are required." });
+      .json({ message: "Title, category, and questions are required." ,success:true});
   }
 
   try {
@@ -18,18 +18,23 @@ export const createQuiz = async (req, res) => {
       category,
       questions,
     });
-    res.status(201).json({ msg: "success" });
-  } catch (e) {
-    res.status(500).json({ message: "Failed to create quiz" });
+    res.status(201).json({ message: "Quiz created successfully",success:true });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create quiz",success:false,error:error.message });
   }
 };
 
 export const getAllQuizzes = async (req, res) => {
   try {
     const quizzes = await quizModel.find({});
-    res.status(200).json(quizzes);
-  } catch (e) {
-    res.status(500).json({ message: "Failed to fetch quizzes", e });
+    res.status(200).json({
+      message: "Quizzes fetched successfully",
+      quizzes:quizzes,
+      length: quizzes.length,
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch quizzes", success:false, error:error.message });
   }
 };
 
@@ -40,12 +45,16 @@ export const getQuizById = async (req, res) => {
     const quiz = await quizModel.findById(id);
 
     if (!quiz) {
-      return res.status(404).json({ message: "Quiz not found" });
+      return res.status(404).json({ message: "Quiz not found",success:false });
     }
 
-    res.json(quiz);
+    res.json({
+      message: "Quiz fetched successfully",
+      quiz:quiz,
+      success: true
+    });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch quiz", error });
+    res.status(500).json({ message: "Failed to fetch quiz",success:false, error:error.message });
   }
 };
 
@@ -55,12 +64,12 @@ export const deleteQuizById = async (req, res) => {
   try {
     const quiz = await quizModel.deleteOne({ _id: id });
     if (!quiz) {
-      return res.status(404).json({ message: "Quiz not found" });
+      return res.status(404).json({ message: "Quiz not found" ,success:false});
     }
 
-    res.status(200).json({ message: "Quiz deleted successfuly" });
-  } catch (e) {
-    res.status(500).json({ message: "Failed to delete quiz", e });
+    res.status(200).json({ message: "Quiz deleted successfuly",success:true });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete quiz", success:false,error:error.message});
   }
 };
 
@@ -70,7 +79,7 @@ export const submitQuiz = async (req, res) => {
   try {
     const user = await userModel.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found",success:false });
     }
 
     user.quizzesTaken.push({
@@ -82,7 +91,7 @@ export const submitQuiz = async (req, res) => {
 
     const quiz = await quizModel.findById(quizId);
     if (!quiz) {
-      return res.status(404).json({ message: "Quiz not found" });
+      return res.status(404).json({ message: "Quiz not found",success:false });
     }
 
     quiz.takenBy.push({
@@ -91,10 +100,10 @@ export const submitQuiz = async (req, res) => {
 
     await quiz.save();
 
-    res.status(200).json({ message: "Quiz submitted successfully" });
+    res.status(200).json({ message: "Quiz submitted successfully",success:true });
   } catch (error) {
     console.error("Error submitting quiz:", error);
-    res.status(500).json({ message: "Failed to submit quiz" });
+    res.status(500).json({ message: "Failed to submit quiz",success:false,error:error.message });
   }
 };
 
@@ -104,9 +113,9 @@ export const getLeaderboard = async (req, res) => {
   try {
   
    const quiz=await quizModel.findById(id);
-   if(!quiz) return res.status(404).json({ message: "Quiz not found" });
+   if(!quiz) return res.status(404).json({ message: "Quiz not found", success: true });
   
-    
+    console.log(quiz.category);
     
     const leaderboard =  quiz.takenBy.map(async (user) => {
         const existingUser=await getUser(user.userId);
@@ -115,7 +124,7 @@ export const getLeaderboard = async (req, res) => {
       if(existingUser){
         const quizInfo= existingUser.quizzesTaken.find((quiz)=> quiz.quizId === id);
         return {
-          id:uuidv4(),
+          id:existingUser._id,
           name:existingUser.name,
           email:existingUser.email,
           score:quizInfo?.score ? quizInfo?.score : 0
@@ -129,10 +138,14 @@ export const getLeaderboard = async (req, res) => {
 
      const sortedLeaderboard = leaderScore.sort((a, b) => b.score - a.score);
 
-    res.status(200).json(sortedLeaderboard);
+    res.status(200).json({
+      message: "Leaderboard fetched successfully",
+      leaderboard: sortedLeaderboard, 
+      length: sortedLeaderboard.length, 
+      success: true,
+    });
   } catch (error) {
-    console.error("Error fetching leaderboard:", error);
-    res.status(500).json({ message: "Failed to fetch leaderboard" });
+    res.status(500).json({ message: "Failed to fetch leaderboard", success: true, error:error.message });
   }
 };
 

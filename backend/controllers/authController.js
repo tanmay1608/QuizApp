@@ -7,12 +7,19 @@ import { v4 as uuidv4 } from "uuid";
 
 export const register = async (req, res) => {
   const { email, password, address, name } = req.body;
-  console.log(email,password,address,name);
+  console.log(email, password, address, name);
+  if (!email || !password || !address || !name) {
+    return res
+      .status(400)
+      .json({ message: "All fields are required", success: false });
+  }
 
   try {
     const existingUser = await userModel.findOne({ email });
     if (existingUser)
-      return res.status(400).json({ message: "User already exists" });
+      return res
+        .status(400)
+        .json({ message: "User already exists", success: false });
 
     const userCount = await userModel.countDocuments();
     const role = userCount === 0 ? "admin" : "user";
@@ -27,10 +34,15 @@ export const register = async (req, res) => {
       name,
     });
 
-    res.status(200).json({ message: "User created successfully", user: user });
+    res
+      .status(201)
+      .json({ message: "User created successfully", success: true });
   } catch (error) {
-    //console.error("user registration Error:", error);
-    res.status(500).json({ message: "registration failed", error });
+    res.status(500).json({
+      message: "registration failed",
+      success: false,
+      error: error.message,
+    });
   }
 };
 
@@ -41,13 +53,17 @@ export const login = async (req, res) => {
     const user = await userModel.findOne({ email });
     console.log(user);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ message: "Invalid credentials", success: false });
     }
 
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
@@ -57,18 +73,24 @@ export const login = async (req, res) => {
     res.cookie("authToken", token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24,
-      secure:true
+      secure: true,
     });
 
-    res.status(200).json({
+    const userInfo = {
       id: user._id,
       role: user.role,
       name: user.name,
       email: user.email,
       quizzesTaken: user.quizzesTaken,
-    });
+    };
+
+    res
+      .status(200)
+      .json({ message: "Login successful", user: userInfo, success: true });
   } catch (error) {
-    res.status(500).json({ message: "Login failed", error });
+    res
+      .status(500)
+      .json({ message: "Login failed", success: false, error: error.message });
   }
 };
 
@@ -76,24 +98,26 @@ export const logout = async (req, res) => {
   console.log("inside logout");
   try {
     res.clearCookie("authToken");
-    res.status(200).json({ message: "Logged out successfully" });
+    res.status(200).json({ message: "Logged out successfully", success: true });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message, success: false });
   }
 };
 
 export const userInfo = async (req, res) => {
+  console.log("hello");
   const { id } = req.params;
   try {
     const user = await userModel.findById(id);
-    if (!user) return res.status(400).json({ message: "User not found" });
+    if (!user)
+      return res.status(400).json({ message: "User not found", success: true });
 
     const promiseArray = user.quizzesTaken.map(async (quiz) => {
       const quizData = await quizModel.findById(quiz.quizId);
       if (!quizData) return null;
 
       const { title, category, _id } = quizData;
-      console.log("skakl");
+
       return {
         id: uuidv4(),
         score: quiz.score,
@@ -104,22 +128,30 @@ export const userInfo = async (req, res) => {
         },
       };
     });
-    console.log(promiseArray);
+
     const quizzesTaken = await Promise.all(promiseArray);
 
-  
     const updatedQuizzes = quizzesTaken.filter((quiz) => quiz !== null);
     const updatedUser = {
       _id: user._id,
       name: user.name,
       email: user.email,
-      password: user.password,
       address: user.address,
       role: user.role,
-      quizzesTaken: updatedQuizzes, 
+      quizzesTaken: updatedQuizzes,
     };
-    res.json(updatedUser);
+    res.json({
+      success: true,
+      message: "User information fetched successfully",
+      user: updatedUser,
+    });
   } catch (error) {
-    return res.status(500).json({ message: "Failed to fetch user", error });
+    return res
+      .status(500)
+      .json({
+        message: "Failed to fetch user",
+        success: false,
+        error: error.message,
+      });
   }
 };
