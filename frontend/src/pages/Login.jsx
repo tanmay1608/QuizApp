@@ -22,6 +22,8 @@ const Login = () => {
   },[success])
 
   
+
+  
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -31,8 +33,8 @@ const Login = () => {
       //navigate("/");
     
     } catch (error) { 
-      console.log("laskjlaskjalsk")
-      setError(error.response.data.message);
+      console.log(error.message)
+    
     }
   };
 

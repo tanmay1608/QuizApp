@@ -91,7 +91,7 @@ const AddQuiz = () => {
         { withCredentials: true }
       );
       setSuccessMessage("Quiz created successfully!");
-      navigate("/");
+      navigate("/admin");
     } catch (error) {
       setErrorMessage(
         error.response ? error.response.data.message : "Failed to create quiz"

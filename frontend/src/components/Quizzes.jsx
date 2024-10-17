@@ -11,23 +11,25 @@ const Quizzes = () => {
   const quizzesData = useLoaderData();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const [searchInput, setSearchInput] = useState("");
   const dispatch = useDispatch();
   const { success } = useSelector((state) => state.user);
   const [userInfo, setUserInfo] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [filteredList, setFilteredList] = useState({});
   const savedUser = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
+  const [groupedQuizzes, setGroupedQuizzes] = useState({});
 
+  useEffect(() => {
+    if (!savedUser) {
+      setSelectedCategory(null);
+      setUserInfo(null);
+    }
+  }, [savedUser]);
 
-  useEffect(()=>{
-      if(!savedUser){
-        setSelectedCategory(null);
-        setUserInfo(null);
-      }
-  },[savedUser])
-
-console.log(success);
+  console.log(success);
   useEffect(() => {
     if (success) {
       notify(success);
@@ -58,33 +60,64 @@ console.log(success);
   };
 
   const notify = (state) => {
-    if(state === "loggedIn") toast("Logged In successfully")
-      else toast("Logged Out successfully")
-  }
+    if (state === "loggedIn") toast("Logged In successfully");
+    else toast("Logged Out successfully");
+  };
+  useEffect(() => {
+    const quizzesByCategory = {};
 
-  const groupedQuizzes = {};
-  quizzesData.forEach((quiz) => {
-    if (!groupedQuizzes[quiz.category]) {
-      groupedQuizzes[quiz.category] = [];
-    }
-    groupedQuizzes[quiz.category].push(quiz);
-  });
+    quizzesData.forEach((quiz) => {
+      if (!quizzesByCategory[quiz.category]) {
+        quizzesByCategory[quiz.category] = [];
+      }
+      quizzesByCategory[quiz.category].push(quiz);
+    });
+
+    setGroupedQuizzes(quizzesByCategory);
+    setFilteredList(quizzesByCategory);
+  }, [quizzesData]);
+
+  const handleOnChange = (e) => {
+    const searchParam = e.target.value.toLowerCase();
+    setSearchInput(searchParam);
+    setSelectedCategory(null);
+
+    const updatedList = {};
+
+    Object.keys(groupedQuizzes).forEach((category) => {
+      if (category.toLowerCase().includes(searchParam)) {
+        updatedList[category] = groupedQuizzes[category];
+      }
+    });
+
+    setFilteredList(updatedList);
+  };
 
   return (
-    <div className="h-[60vh] bg-[#0b0e15] p-6">
+    <div className="min-h-screen bg-[#0b0e15] p-6">
       <ToastContainer />
-      <h1 className="text-4xl font-extrabold text-center text-gray-400 mb-12">
-        Available Quizzes
-      </h1>
+
+      <div className="flex justify-center mb-12 p-5">
+        <h1 className="text-4xl font-extrabold text-center text-gray-400 mr-5 ">
+          Available Quizzes
+        </h1>
+        <input
+          type="text"
+          placeholder="Search Categories..."
+          value={searchInput}
+          onChange={(e) => handleOnChange(e)}
+          className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#f89f2b]"
+        />
+      </div>
 
       <div className="mb-6 flex justify-center flex-wrap items-center ">
-        {Object.keys(groupedQuizzes).map((category, index) => (
+        {Object.keys(filteredList).map((category, index) => (
           <div
             key={category}
-            className={`w-40 mx-2 h-32 px-4 py-7 rounded-lg shadow-md  bg-[#19b4fa] mb-10 hover:scale-105 transition-all duration-300 ease-in-out flex items-center`}
+            className={`w-40 mx-2 h-32  rounded-lg shadow-md  bg-[#19b4fa] mb-10 hover:scale-105 transition-all duration-300 ease-in-out flex items-center`}
           >
             <button
-              className="w-full px-4 py-2 text-white font-bold rounded hover:bg-opacity-80 transition-all duration-200"
+              className="w-full h-full  px-4 py-2 text-white font-bold rounded hover:bg-opacity-80 transition-all duration-200"
               onClick={() => setSelectedCategory(category)}
             >
               {category}
@@ -94,7 +127,7 @@ console.log(success);
       </div>
       {selectedCategory ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
-          {groupedQuizzes[selectedCategory].map((quiz) => {
+          {filteredList[selectedCategory].map((quiz) => {
             const isAttempted = userInfo?.quizzesTaken.find(
               (q) => q?.quiz?.id === quiz._id
             );
@@ -130,7 +163,7 @@ console.log(success);
                       You Scored:
                     </p>
                     <p className="text-4xl font-extrabold text-green-500 mb-10">
-                      {isAttempted.score*10} Points
+                      {isAttempted.score * 10} Points
                     </p>
                   </div>
                 )}

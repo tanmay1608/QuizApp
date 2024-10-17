@@ -13,12 +13,22 @@ export const createQuiz = async (req, res) => {
 
   
   try {
+    const existingQuiz = await quizModel.findOne({ title });
+    if (existingQuiz) {
+      return res.status(409).json({ 
+        success: false, 
+        message: "Quiz title already exists" 
+      });
+    }
+  
     const quiz = await quizModel.create({
       title,
       category,
       questions,
     });
+
     res.status(201).json({ message: "Quiz created successfully",success:true });
+
   } catch (error) {
     res.status(500).json({ message: "Failed to create quiz",success:false,error:error.message });
   }

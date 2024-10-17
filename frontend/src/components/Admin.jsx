@@ -8,8 +8,8 @@ import { PORT } from "../utils/constants";
 const Admin = () => {
   const [quizzesData, setQuizzesData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [groupedQuizzes,setGroupedQuizzes] = useState({});
- 
+  const [groupedQuizzes, setGroupedQuizzes] = useState({});
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,46 +37,46 @@ const Admin = () => {
 
   const handleDeleteQuiz = async (id) => {
     try {
-      await axios.delete(`http://localhost:${PORT}/api/quizzes/${id}`, {
-        withCredentials: true,
-      });
-      setQuizzesData((prevQuizzes) =>
-        prevQuizzes.filter((quiz) => quiz._id !== id)
+      const response = await axios.delete(
+        `http://localhost:${PORT}/api/quizzes/${id}`,
+        {
+          withCredentials: true,
+        }
       );
-      setSelectedCategory(null);
+
+      if (response.status === 200) {
+        setQuizzesData((prevQuizzes) =>
+          prevQuizzes.filter((quiz) => quiz._id !== id)
+        );
+
+        const filteredGroupedQuizzes = groupedQuizzes[selectedCategory].filter(
+          (quiz) => quiz._id !== id
+        );
+        if (filteredGroupedQuizzes.length === 0) {
+          setGroupedQuizzes({});
+          setSelectedCategory(null);
+        } else setGroupedQuizzes[filteredGroupedQuizzes];
+      }
+
+      // groupedQuizzes[selectedCategory];
+      // setSelectedCategory(null);
       console.log("Quiz deleted successfully:", id);
     } catch (error) {
       console.error("Error deleting quiz:", error);
     }
   };
 
-  const gradients = [
-    "bg-gradient-to-br from-[#007675] via-[#065555] to-[#023836]",
-    "bg-gradient-to-br from-[#182a5f] via-[#121f42] to-[#0f1730]",
-    "bg-gradient-to-br from-[#9e6130] via-[#874613] to-[#672404]",
-    "bg-gradient-to-br from-[#218589] via-[#236a71] to-[#2f515b]",
-  ];
-
-  function getRandomGradient() {
-    return gradients[Math.floor(Math.random() * gradients.length)];
-  }
-
-  
- 
-  
-  useEffect(()=>{
-    const updatedGroupedQuizzes={}
+  useEffect(() => {
+    const updatedGroupedQuizzes = {};
     quizzesData.forEach((quiz) => {
-      if (!updatedGroupedQuizzes[quiz.category]) {
-        updatedGroupedQuizzes[quiz.category] = [];
+      if (!updatedGroupedQuizzes[quiz.category.toLowerCase()]) {
+        updatedGroupedQuizzes[quiz.category.toLowerCase()] = [];
       }
-      updatedGroupedQuizzes[quiz.category].push(quiz);
+      updatedGroupedQuizzes[quiz.category.toLowerCase()].push(quiz);
     });
 
     setGroupedQuizzes(updatedGroupedQuizzes);
-  },[quizzesData])
-
-  
+  }, [quizzesData]);
 
   return (
     <div className="min-h-screen  p-6 bg-[#0b0e15]">
@@ -96,14 +96,13 @@ const Admin = () => {
           {Object.keys(groupedQuizzes).map((category, index) => (
             <div
               key={category}
-             
-              className={`w-32 h-32 mx-4 rounded-lg shadow-xl bg-[#181b22]     mb-10 hover:scale-105 hover:bg-[#f89f2b] transition-all duration-500 ease-in-out flex items-center justify-center border border-transparent backdrop-blur-lg`}
+              className={`w-32 h-32 mx-4 rounded-lg shadow-xl bg-[#181b22]    mb-10 hover:scale-105 hover:bg-[#f89f2b] transition-all duration-500 ease-in-out flex items-center justify-center border border-transparent backdrop-blur-lg`}
             >
               <button
-                className="w-full px-4 py-2 text-white font-bold rounded hover:bg-opacity-80 transition-all duration-200"
+                className="w-full h-full  px-4 py-2 text-white font-bold rounded hover:bg-opacity-80 transition-all duration-200"
                 onClick={() => setSelectedCategory(category)}
               >
-                {category}
+                {`${category?.charAt(0).toUpperCase()}${category.slice(1)}`}
               </button>
             </div>
           ))}

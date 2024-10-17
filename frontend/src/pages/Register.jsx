@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
 import { PORT } from "../utils/constants";
+import validateFormData from "../utils/validateFormData";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -20,20 +20,13 @@ const Register = () => {
         setFormData({ ...formData, [name]: value });
       };
 
-     
-        const validateForm = () => {
-          const {name,email,password,address} = formData;
-          console.log("inside validation");
-          if(!name || !email || !password || !address) return "All fields are required";
-          return null;
-        };
       
     
       const handleSubmit = async (e) => {
         e.preventDefault();
         
         
-        const validationError = validateForm();
+        const validationError = validateFormData(formData);
         if (validationError) {
           setError(validationError);
           return;
