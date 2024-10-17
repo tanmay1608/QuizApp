@@ -1,7 +1,9 @@
 import axios from "axios"
+import { PORT } from "../utils/constants";
 
 const fetchQuizData=async (url)=>{
-    return await axios.get(`http://localhost:8000/api/quizzes/${url}`)
+console.log("inside check");
+    return await axios.get(`http://localhost:${PORT}/api/quizzes/${url}`)
 }
 export const fetchLeaderboardData=async (params)=>{
     

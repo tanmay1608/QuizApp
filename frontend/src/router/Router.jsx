@@ -21,6 +21,7 @@ import Profile from "../components/Profile"
 import { fetchUserInfo } from "../loaders/fetchUserInfo"
 import NotFound from "../pages/NotFound"
 import Error from "../pages/Error"
+import { verfiyUserRole } from "../loaders/verfiyUserRole"
 
 const allRoutes=createBrowserRouter([
     {
@@ -55,6 +56,7 @@ const allRoutes=createBrowserRouter([
             {
                 path:'admin',
                 element:<AdminWrapper/>,
+                loader:verfiyUserRole,
                 children:[{
                     path:'/admin',
                     element:<Admin/>
@@ -71,6 +73,7 @@ const allRoutes=createBrowserRouter([
             {
                 path:'add-quiz',
                 element:<AddQuizWrapper/>,
+                loader:verfiyUserRole,
                 children:[
                     {
                         path:'/add-quiz',

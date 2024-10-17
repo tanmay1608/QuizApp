@@ -153,3 +153,19 @@ export const userInfo = async (req, res) => {
       });
   }
 };
+
+export const verfiyUserRole= async (req,res)=>{
+  const {role}=req.body;
+  if(!role) return res.status(400).json({message:"roles not defined", success:false});
+  const user=req.user;
+   console.log(role,user);
+   try {
+    if(req.user.role === req.body.role) {return res.status(200).json({message:"user verfied",isVerfied:true,success:true})}
+   else{ 
+    res.clearCookie("authToken");
+    return res.status(200).json({message:"user is not verfied",isVerfied:false,success:true})
+  }
+   } catch (error) {
+    res.status(500).json({ error: error.message, success: false });
+   }
+}

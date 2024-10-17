@@ -8,7 +8,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 export const app = express();
-const PORT = 8000;
 let server;
 
 app.use(
@@ -34,7 +33,7 @@ export const connectDBAndStartServer = async () => {
     await mongoose.connect(process.env.MONGO_URL);
     console.log("mongoDb connected");
     server=app.listen(process.env.PORT || 8000, () =>
-      console.log(`Server Started at POST: ${PORT}`)
+      console.log(`Server Started at PORT: ${process.env.PORT}`)
     );
   } catch (e) {
     console.log(e);

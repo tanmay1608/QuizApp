@@ -3,6 +3,7 @@ import Quizzes from "./Quizzes";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import QuizCard from "./QuizCard";
+import { PORT } from "../utils/constants";
 
 const Admin = () => {
   const [quizzesData, setQuizzesData] = useState([]);
@@ -15,7 +16,7 @@ const Admin = () => {
     try {
       const fetchData = async () => {
         const quizzesData = await axios.get(
-          "http://localhost:8000/api/quizzes"
+          `http://localhost:${PORT}/api/quizzes`
         );
         setQuizzesData(quizzesData.data.quizzes);
         console.log("data", quizzesData);
@@ -36,7 +37,7 @@ const Admin = () => {
 
   const handleDeleteQuiz = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/quizzes/${id}`, {
+      await axios.delete(`http://localhost:${PORT}/api/quizzes/${id}`, {
         withCredentials: true,
       });
       setQuizzesData((prevQuizzes) =>
@@ -96,7 +97,7 @@ const Admin = () => {
             <div
               key={category}
              
-              className={`w-40 h-48 mx-4 rounded-lg shadow-xl bg-[#181b22]     mb-10 hover:scale-105 hover:bg-[#f89f2b] transition-all duration-500 ease-in-out flex items-center justify-center border border-transparent backdrop-blur-lg`}
+              className={`w-32 h-32 mx-4 rounded-lg shadow-xl bg-[#181b22]     mb-10 hover:scale-105 hover:bg-[#f89f2b] transition-all duration-500 ease-in-out flex items-center justify-center border border-transparent backdrop-blur-lg`}
             >
               <button
                 className="w-full px-4 py-2 text-white font-bold rounded hover:bg-opacity-80 transition-all duration-200"

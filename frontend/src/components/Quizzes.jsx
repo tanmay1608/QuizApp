@@ -5,6 +5,7 @@ import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toggleSuccess } from "../../redux/slice/userSlice";
+import { PORT } from "../utils/constants";
 
 const Quizzes = () => {
   const quizzesData = useLoaderData();
@@ -39,7 +40,7 @@ console.log(success);
       const fetchUser = async () => {
         try {
           const userData = await axios.get(
-            `http://localhost:8000/api/user/${savedUser?.id}`,
+            `http://localhost:${PORT}/api/user/${savedUser?.id}`,
             { withCredentials: true }
           );
           setUserInfo(userData.data.user);
@@ -70,7 +71,7 @@ console.log(success);
   });
 
   return (
-    <div className="min-h-screen bg-[#0b0e15] p-6">
+    <div className="h-[60vh] bg-[#0b0e15] p-6">
       <ToastContainer />
       <h1 className="text-4xl font-extrabold text-center text-gray-400 mb-12">
         Available Quizzes
@@ -80,7 +81,7 @@ console.log(success);
         {Object.keys(groupedQuizzes).map((category, index) => (
           <div
             key={category}
-            className={`w-60 mx-2 h-48 px-4 py-7 rounded-lg shadow-md  bg-[#19b4fa] mb-10 hover:scale-105 transition-all duration-300 ease-in-out flex items-center`}
+            className={`w-40 mx-2 h-32 px-4 py-7 rounded-lg shadow-md  bg-[#19b4fa] mb-10 hover:scale-105 transition-all duration-300 ease-in-out flex items-center`}
           >
             <button
               className="w-full px-4 py-2 text-white font-bold rounded hover:bg-opacity-80 transition-all duration-200"

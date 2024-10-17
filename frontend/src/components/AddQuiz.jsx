@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { PORT } from "../utils/constants";
 
 const AddQuiz = () => {
   const [formData, setFormData] = useState({
@@ -81,7 +82,7 @@ const AddQuiz = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/quizzes",
+        `http://localhost:${PORT}/api/quizzes`,
         {
           title: formData.title,
           category: formData.category,

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
+import { PORT } from "../utils/constants";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -40,7 +41,7 @@ const Register = () => {
         
 
         try {
-          const response = await axios.post('http://localhost:8000/api/user/register', formData,{withCredentials:true});
+          const response = await axios.post(`http://localhost:${PORT}/api/user/register`, formData,{withCredentials:true});
           setSuccess('User registered successfully!');
           setError('');
           console.log(response.data);

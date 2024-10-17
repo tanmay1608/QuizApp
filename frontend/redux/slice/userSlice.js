@@ -1,6 +1,7 @@
 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
+import { PORT } from "../../src/utils/constants";
 
 const initialState = {
     user: null,     
@@ -12,7 +13,7 @@ const initialState = {
 export const loginUser = createAsyncThunk(
     "user/loginUser",
     async (data) => {
-      const response = await axios.post("http://localhost:8000/api/user/login", data,
+      const response = await axios.post(`http://localhost:${PORT}/api/user/login`, data,
         { withCredentials: true }
       );
       localStorage.setItem("user", JSON.stringify(response.data.user));
@@ -23,7 +24,7 @@ export const loginUser = createAsyncThunk(
 export const logoutUser=createAsyncThunk(
     "user/logoutUser",
     async ()=>{
-        const response = await axios.post("http://localhost:8000/api/user/logout", {},
+        const response = await axios.post(`http://localhost:${PORT}/api/user/logout`, {},
             { withCredentials: true }
           );
           console.log("inside thunk")

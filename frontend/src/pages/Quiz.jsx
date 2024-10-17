@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { PORT } from "../utils/constants";
 
 const Quiz = () => {
   const quizData = useLoaderData();
@@ -34,7 +35,7 @@ const Quiz = () => {
     setIsSubmitted(true);
     const score = calculateScore();
     try {
-      await axios.post("http://localhost:8000/api/quizzes/submit", {
+      await axios.post(`http://localhost:${PORT}/api/quizzes/submit`, {
         userId:savedUser?.id,
         quizId: id,
         score:score
