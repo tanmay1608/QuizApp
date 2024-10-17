@@ -42,7 +42,7 @@ console.log(success);
             `http://localhost:8000/api/user/${savedUser?.id}`,
             { withCredentials: true }
           );
-          setUserInfo(userData.data);
+          setUserInfo(userData.data.user);
         } catch (error) {
           console.log(error);
         }
@@ -53,7 +53,7 @@ console.log(success);
 
   const handleStartQuiz = (quizId) => {
     if (savedUser?.role === "user") navigate(`/quiz/${quizId}`);
-    else navigate("/register");
+    else navigate("/login");
   };
 
   const notify = (state) => {

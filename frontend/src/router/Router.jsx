@@ -20,10 +20,12 @@ import ProfileWrapper from "../pages/ProfileWrapper"
 import Profile from "../components/Profile"
 import { fetchUserInfo } from "../loaders/fetchUserInfo"
 import NotFound from "../pages/NotFound"
+import Error from "../pages/Error"
 
 const allRoutes=createBrowserRouter([
     {
         path:'/',
+        errorElement:<Error/>,
         element:<App/>,
         children:[
             {
@@ -91,7 +93,9 @@ const allRoutes=createBrowserRouter([
                 path:'*',
                 element:<NotFound/>
             }
-        ]
+            
+        ],
+        
         
     }
 ])

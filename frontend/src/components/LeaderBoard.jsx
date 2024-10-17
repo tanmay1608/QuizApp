@@ -5,8 +5,8 @@ import { FaCrown } from "react-icons/fa"; // Crown icon for #1 rank
 const LeaderBoard = () => {
   const params = useParams();
   const leaderboardData = useLoaderData();
-  const quizInfo = leaderboardData[1]?.value?.data;
-  const leaderboardInfo = leaderboardData[0]?.value?.data;
+  const quizInfo = leaderboardData[1]?.value?.data.quiz;
+  const leaderboardInfo = leaderboardData[0]?.value?.data.leaderboard;
   const user = localStorage.getItem("user");
   let currentUserEmail = null;
   if (user) currentUserEmail = JSON.parse(user).email;

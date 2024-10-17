@@ -7,8 +7,9 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
-const app = express();
+export const app = express();
 const PORT = 8000;
+let server;
 
 app.use(
   cors({
@@ -23,15 +24,16 @@ app.use(cookieParser());
 app.use("/api/user/", userAuthRoutes);
 app.use("/api/quizzes", quizRoutes);
 app.use((req, res) => {
-  res.status(404).json({ message: "Endpoint not found" });
+  res.status(404).json({ message: "Endpoint not found" ,success:false});
 });
 
 
-const connectDBAndStartServer = async () => {
+export const connectDBAndStartServer = async () => {
+  console.log("Attempting to connect to the database and start the server...");
   try {
     await mongoose.connect(process.env.MONGO_URL);
     console.log("mongoDb connected");
-    app.listen(process.env.PORT || 8000, () =>
+    server=app.listen(process.env.PORT || 8000, () =>
       console.log(`Server Started at POST: ${PORT}`)
     );
   } catch (e) {
@@ -40,3 +42,26 @@ const connectDBAndStartServer = async () => {
 };
 
 connectDBAndStartServer();
+
+export const closeServer = async () => {
+  console.log("inside close server")
+  if (server) {
+    await new Promise((resolve) => {
+      server.close((err) => {
+        if (err) {
+          console.error("Error closing the server:", err);
+        } else {
+          console.log("Server closed");
+        }
+        resolve(); 
+      });
+    });
+ 
+
+  }
+  await mongoose.connection.close(); 
+  console.log("mongo db connection closed");
+  
+
+};
+

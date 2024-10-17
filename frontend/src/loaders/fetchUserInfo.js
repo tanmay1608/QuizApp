@@ -5,5 +5,5 @@ export const fetchUserInfo = async (paramsObject) => {
   const userInfo = await axios.get(
     `http://localhost:8000/api/user/${paramsObject?.params?.id}`
   );
-  return userInfo.data;
+  return userInfo.data.user;
 };

@@ -9,13 +9,13 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
     <div className="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-6">
-      {/* User Info Section */}
+      
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-gray-800 mb-2">{profileInfo.name}</h1>
         <p className="text-lg text-gray-500">{profileInfo.email}</p>
       </div>
 
-      {/* Quizzes List Section */}
+     
       <h2 className="text-2xl font-semibold text-gray-700 mb-4">Quizzes Attempted</h2>
       
       {profileInfo.quizzesTaken.length === 0 ? (

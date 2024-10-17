@@ -7,6 +7,8 @@ import QuizCard from "./QuizCard";
 const Admin = () => {
   const [quizzesData, setQuizzesData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [groupedQuizzes,setGroupedQuizzes] = useState({});
+ 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,7 +17,7 @@ const Admin = () => {
         const quizzesData = await axios.get(
           "http://localhost:8000/api/quizzes"
         );
-        setQuizzesData(quizzesData.data);
+        setQuizzesData(quizzesData.data.quizzes);
         console.log("data", quizzesData);
       };
       fetchData();
@@ -40,6 +42,7 @@ const Admin = () => {
       setQuizzesData((prevQuizzes) =>
         prevQuizzes.filter((quiz) => quiz._id !== id)
       );
+      setSelectedCategory(null);
       console.log("Quiz deleted successfully:", id);
     } catch (error) {
       console.error("Error deleting quiz:", error);
@@ -57,18 +60,22 @@ const Admin = () => {
     return gradients[Math.floor(Math.random() * gradients.length)];
   }
 
-  const groupedQuizzes = {};
-  quizzesData.forEach((quiz) => {
-    if (!groupedQuizzes[quiz.category]) {
-      groupedQuizzes[quiz.category] = [];
-    }
-    groupedQuizzes[quiz.category].push(quiz);
-  });
+  
+ 
+  
+  useEffect(()=>{
+    const updatedGroupedQuizzes={}
+    quizzesData.forEach((quiz) => {
+      if (!updatedGroupedQuizzes[quiz.category]) {
+        updatedGroupedQuizzes[quiz.category] = [];
+      }
+      updatedGroupedQuizzes[quiz.category].push(quiz);
+    });
 
-  const colors = ['#FFD700', '#FFA500', '#FF69B4', '#87CEFA', '#90EE90']; // Yellow, Orange, Pink, Sky Blue, Light Green
+    setGroupedQuizzes(updatedGroupedQuizzes);
+  },[quizzesData])
 
-  // Function to get a random color from the array
-  const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
+  
 
   return (
     <div className="min-h-screen  p-6 bg-[#0b0e15]">

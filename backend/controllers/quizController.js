@@ -4,14 +4,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const createQuiz = async (req, res) => {
   const { title, category, questions } = req.body;
-  console.log(title, category, questions);
-
+  
   if (!title || !category || !Array.isArray(questions)) {
     return res
       .status(400)
       .json({ message: "Title, category, and questions are required." ,success:true});
   }
 
+  
   try {
     const quiz = await quizModel.create({
       title,

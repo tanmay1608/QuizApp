@@ -37,7 +37,7 @@ const Register = () => {
           setError(validationError);
           return;
         }
-        //return ;
+        
 
         try {
           const response = await axios.post('http://localhost:8000/api/user/register', formData,{withCredentials:true});
@@ -48,7 +48,7 @@ const Register = () => {
           
         } catch (error) {
             console.log(error);
-          setError(error.response?.data?.message || 'Signup failed');
+          setError(error.response?.data?.message || 'Registration failed');
           setSuccess('');
         }
       };

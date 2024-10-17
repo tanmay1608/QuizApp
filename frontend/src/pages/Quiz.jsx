@@ -56,8 +56,8 @@ const Quiz = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
-      <ToastContainer />
+    <div className="min-h-screen bg-gray-100 p-6">
+      <ToastContainer/>
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
         {quizData.title}
       </h1>
@@ -66,14 +66,14 @@ const Quiz = () => {
       </h2>
 
       {isSubmitted ? (
-        <div className="bg-white p-6 rounded-lg shadow-md ">
+        <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4">Quiz Results</h2>
           <p className="text-lg">
             You scored {calculateScore()} out of {quizData.questions.length}.
           </p>
         </div>
       ) : (
-        <div className="bg-white p-6 rounded-lg shadow-md ">
+        <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">
             {currentQuestionIndex + 1}. {currentQuestion.questionText}
           </h2>
@@ -83,7 +83,7 @@ const Quiz = () => {
               <div key={option} className="flex items-center">
                 <input
                   type="radio"
-                  name={`question-${currentQuestionIndex}`}
+                  name={`question-${currentQuestionIndex}`} 
                   value={option}
                   checked={answers[currentQuestion._id] === option}
                   onChange={() => handleOptionSelect(option)}

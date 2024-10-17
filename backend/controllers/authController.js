@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from "uuid";
 
 export const register = async (req, res) => {
   const { email, password, address, name } = req.body;
-  console.log(email, password, address, name);
   if (!email || !password || !address || !name) {
     return res
       .status(400)
@@ -105,7 +104,6 @@ export const logout = async (req, res) => {
 };
 
 export const userInfo = async (req, res) => {
-  console.log("hello");
   const { id } = req.params;
   try {
     const user = await userModel.findById(id);
