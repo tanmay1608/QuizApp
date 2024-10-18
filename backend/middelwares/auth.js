@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { JWT_SECRET } from "../utils/constants.js";
 
 export const authenticate = (req, res, next) => {
-  console.log("inside authen")
+  
   try {
     const token = req.cookies.authToken;
     console.log("token",token);

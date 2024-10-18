@@ -1,5 +1,5 @@
 import express from "express";
-import { login, logout, register, userInfo, verfiyUserRole } from "../controllers/authController.js";
+import { login, logout, register, userInfo, verifyUserRole } from "../controllers/authController.js";
 import { authenticate } from "../middelwares/auth.js";
 
 const router = express.Router();
@@ -23,7 +23,7 @@ router.get("/:id",userInfo);
 router.all("/:id",(req,res)=>{
     return res.status(405).json({message: `Method ${req.method} not allowed on this route`,success:false})
 })
-router.post("/",authenticate,verfiyUserRole);
+router.post("/",authenticate,verifyUserRole);
 router.all("/",(req,res)=>{
     return res.status(405).json({message: `Method ${req.method} not allowed on this route`,success:false})
 })

@@ -62,4 +62,20 @@ describe("POST /register", () => {
     expect(response.status).toBe(201);
     expect(response.body.message).toBe("User created successfully");
   });
+
+  it('should return 500 if registration fail',async ()=>{
+       
+    jest.spyOn(userModel, 'findOne').mockImplementationOnce(() => {
+        throw new Error('Database connection error');
+    });
+    const response=await request(app).post("/api/user/register").send({
+      email: "test2@example.com",
+      password: "password123",
+      name: "test user",
+      address: "test user",
+    });
+
+    expect(response.status).toBe(500);
+    expect(response.body.message).toBe("registration failed"); 
+})
 });

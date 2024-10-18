@@ -10,13 +10,22 @@ export const verfiyUserRole = async () => {
     if(savedUser)
     {
 
-  const response = await axios.post(
-    `http://localhost:${PORT}/api/user`,
-    { role: savedUser?.role },
-    { withCredentials: true }
-  );
-  if(!response?.data?.isVerfied)  localStorage.removeItem("user");
-  return response?.data?.isVerfied;
+      
+      try {
+        const response = await axios.post(
+          `http://localhost:${PORT}/api/user`,
+          { role: savedUser?.role },
+          { withCredentials: true }
+        );
+      
+        if(!response?.data?.isVerfied)  localStorage.removeItem("user");
+        return response?.data?.isVerfied;
+      } catch (error) {
+        console.log(error.message);
+        return false;
+      }
+
+
     }
   
   return false;

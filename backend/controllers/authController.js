@@ -48,6 +48,11 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   console.log("inside login");
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ message: "All fields are required", success: false });
+  }
   try {
     const user = await userModel.findOne({ email });
     console.log(user);
@@ -94,19 +99,21 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  console.log("inside logout");
+  
   try {
     res.clearCookie("authToken");
     res.status(200).json({ message: "Logged out successfully", success: true });
   } catch (error) {
-    res.status(500).json({ error: error.message, success: false });
+    res.status(500).json({message :"Logout failed. Please try again." ,error: error.message, success: false });
   }
 };
 
 export const userInfo = async (req, res) => {
   const { id } = req.params;
+  console.log("id",id);
   try {
     const user = await userModel.findById(id);
+    console.log(user);
     if (!user)
       return res.status(400).json({ message: "User not found", success: true });
 
@@ -138,7 +145,7 @@ export const userInfo = async (req, res) => {
       role: user.role,
       quizzesTaken: updatedQuizzes,
     };
-    res.json({
+    res.status(200).json({
       success: true,
       message: "User information fetched successfully",
       user: updatedUser,
@@ -154,11 +161,11 @@ export const userInfo = async (req, res) => {
   }
 };
 
-export const verfiyUserRole= async (req,res)=>{
+export const verifyUserRole= async (req,res)=>{
   const {role}=req.body;
-  if(!role) return res.status(400).json({message:"roles not defined", success:false});
+  if(!role) return res.status(400).json({message:"role is not defined", success:false});
   const user=req.user;
-   console.log(role,user);
+   
    try {
     if(req.user.role === req.body.role) {return res.status(200).json({message:"user verfied",isVerfied:true,success:true})}
    else{ 
