@@ -20,28 +20,27 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
-app.use("/api/user/", userAuthRoutes);
+app.use("/api/user", userAuthRoutes);
 app.use("/api/quizzes", quizRoutes);
 
 app.use((req, res) => {
-  res.status(404).json({ message: "Endpoint not found" ,success:false});
+  res.status(404).json({ message: "Endpoint not found", success: false });
 });
 
 app.use((err, req, res, next) => {
   console.error("Internal Server Error:", err);
-  res.status(500).json({ 
-    message: "Something went wrong", 
-    success: false 
+  res.status(500).json({
+    message: "Something went wrong",
+    success: false,
   });
 });
-
 
 export const connectDBAndStartServer = async () => {
   console.log("Attempting to connect to the database and start the server...");
   try {
     await mongoose.connect(process.env.MONGO_URL);
     console.log("mongoDb connected");
-    server=app.listen(process.env.PORT || 8000, () =>
+    server = app.listen(process.env.PORT || 8000, () =>
       console.log(`Server Started at PORT: ${process.env.PORT}`)
     );
   } catch (e) {
@@ -52,7 +51,7 @@ export const connectDBAndStartServer = async () => {
 connectDBAndStartServer();
 
 export const closeServer = async () => {
-  console.log("inside close server")
+  console.log("inside close server");
   if (server) {
     await new Promise((resolve) => {
       server.close((err) => {
@@ -61,15 +60,10 @@ export const closeServer = async () => {
         } else {
           console.log("Server closed");
         }
-        resolve(); 
+        resolve();
       });
     });
- 
-
   }
-  await mongoose.connection.close(); 
+  await mongoose.connection.close();
   console.log("mongo db connection closed");
-  
-
 };
-
