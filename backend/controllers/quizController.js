@@ -142,7 +142,7 @@ export const submitQuiz = async (req, res) => {
       .status(200)
       .json({ message: "Quiz submitted successfully", success: true });
   } catch (error) {
-    console.error("Error submitting quiz:", error);
+    
     res.status(500).json({
       message: "Failed to submit quiz",
       success: false,
@@ -153,13 +153,13 @@ export const submitQuiz = async (req, res) => {
 
 export const getLeaderboard = async (req, res) => {
   const { id } = req.params;
-
+  
   try {
     const quiz = await quizModel.findById(id);
     if (!quiz)
       return res.status(404).json({ message: "Quiz not found", success: true });
 
-    console.log(quiz.category);
+    console.log("quiz taken By",quiz.takenBy);
 
     const leaderboard = quiz.takenBy.map(async (user) => {
       const existingUser = await getUser(user.userId);

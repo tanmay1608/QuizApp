@@ -37,7 +37,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await mongoose.connection.collection("users").deleteMany({});
+  //await mongoose.connection.collection("users").deleteMany({});
 });
 
 describe("create quiz", () => {
@@ -120,9 +120,7 @@ describe("create quiz", () => {
 });
 
 describe("get all quizzes", () => {
-  // jest.spyOn(quizModel,"find").mockImplementationOnce(()=>{
-  //     return ["quiz1","quiz2"];
-  // })
+  
   it("should return 200 if quizzes fetched successfully", async () => {
     const response = await request(app).get("/api/quizzes/");
     expect(response.status).toBe(200);
@@ -203,3 +201,120 @@ describe("delete quiz by id", () => {
       expect(response.body.message).toBe("Failed to delete quiz");
     });
   });
+
+describe("submit quiz", () => {
+
+    it("should return 404 if user not found", async () => {
+      const response = await request(app).post(
+        `/api/quizzes/submit`
+      );
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("User not found");
+    });
+  
+    it("should return 404 if quiz not found", async () => {
+
+      const user=await userModel.create({
+        email: "testsubmit@example.com",
+        password: "hashedPassword",
+        address: "test address",
+        role: "user",
+        name: "test user",
+      });
+      
+     
+      const response = await request(app).post(`/api/quizzes/submit`).send({userId:user._id, quizId:new mongoose.Types.ObjectId(), score:4 })
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Quiz not found");
+
+    });
+
+    it("should return 200 if quiz submitted successfully", async () => {
+
+      const user=await userModel.findOne();
+      
+      const quiz=await quizModel.create({
+        title: "test title2",
+        category: "test category",
+        questions: [
+          {
+            questionText: "test question",
+            options: ["1", "2", "3", "4"],
+            correctOption: "1",
+           
+          },
+        ],
+        takenBy: [{userId: new mongoose.Types.ObjectId()},{userId:user._id}]
+      });
+      
+      const response = await request(app).post(`/api/quizzes/submit`).send({userId:user._id, quizId:quiz._id, score:4 })
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe("Quiz submitted successfully");
+
+    });
+  
+    it("should return 500 if failed to submit quiz", async () => {
+
+      const user=await userModel.findOne();
+      const quiz=await quizModel.findOne();
+     
+      jest.spyOn(quizModel, "findById").mockImplementationOnce(() => {
+        throw new Error("db error");
+      });
+      const response = await request(app).post(`/api/quizzes/submit`).send({userId:user._id, quizId:quiz._id, score:4 })
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe("Failed to submit quiz");
+
+    });
+  });
+  
+describe("get leaderboard", () => {
+
+    
+    it("should return 404 if quiz not found", async () => {
+      
+      const id=new mongoose.Types.ObjectId();
+      const response = await request(app).get(`/api/quizzes/${id}/leaderboard`)
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Quiz not found");
+
+    });
+
+    it("should return 200 if leaderboard fetched successfully", async () => {
+
+      const user=await userModel.findOne();
+      const quiz=await quizModel.create({
+        title: "test title3",
+        category: "test category",
+        questions: [
+          {
+            questionText: "test question",
+            options: ["1", "2", "3", "4"],
+            correctOption: "1",
+           
+          },
+        ],
+        takenBy: [{userId: new mongoose.Types.ObjectId()},{userId:user._id}]
+      });
+      
+    
+      const response = await request(app).get(`/api/quizzes/${quiz._id}/leaderboard`)
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe("Leaderboard fetched successfully");
+
+    });
+  
+    it("should return 500 if failed to fetch leaderboard", async () => {
+
+     
+      const quiz=await quizModel.findOne();
+      jest.spyOn(quizModel, "findById").mockImplementationOnce(() => {
+        throw new Error("db error");
+      });
+
+      const response = await request(app).get(`/api/quizzes/${quiz._id}/leaderboard`)
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe("Failed to fetch leaderboard");
+
+    });
+  });  

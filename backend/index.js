@@ -48,7 +48,7 @@ export const connectDBAndStartServer = async () => {
   }
 };
 
-connectDBAndStartServer();
+//connectDBAndStartServer();
 
 export const closeServer = async () => {
   console.log("inside close server");

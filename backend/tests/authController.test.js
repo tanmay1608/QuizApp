@@ -159,7 +159,7 @@ describe("logout", () => {
     expect(response.body.message).toBe("Logged out successfully");
   });
 
-  // it('should return 500 if log out fail',async ()=>{
+  // it.only('should return 500 if log out fail',async ()=>{
 
   //     const res={
   //         clearCookie:jest.fn(),
