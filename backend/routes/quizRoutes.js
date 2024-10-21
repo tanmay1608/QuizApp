@@ -29,6 +29,5 @@ router.all("/:id/leaderboard",(req,res)=>{
     return res.status(405).json({message: `Method ${req.method} not allowed on this route`,success:false})
 })
 
-router.get("/category")
 
 export default router;

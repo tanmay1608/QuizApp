@@ -49,21 +49,3 @@ export const connectDBAndStartServer = async () => {
 };
 
 //connectDBAndStartServer();
-
-export const closeServer = async () => {
-  console.log("inside close server");
-  if (server) {
-    await new Promise((resolve) => {
-      server.close((err) => {
-        if (err) {
-          console.error("Error closing the server:", err);
-        } else {
-          console.log("Server closed");
-        }
-        resolve();
-      });
-    });
-  }
-  await mongoose.connection.close();
-  console.log("mongo db connection closed");
-};

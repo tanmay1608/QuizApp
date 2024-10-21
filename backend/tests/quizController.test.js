@@ -318,3 +318,42 @@ describe("get leaderboard", () => {
 
     });
   });  
+
+  describe("route method not allowed", () => {
+    it("should return 405 for PATCH request on / route", async () => {
+      const response = await request(app).patch("/api/quizzes");
+      expect(response.status).toBe(405);
+      expect(response.body.message).toBe(
+        "Method PATCH not allowed on this route"
+      );
+    });
+  
+    it("should return 405 for GET request on /submit route", async () => {
+      const response = await request(app).get("/api/quizzes/submit");
+      expect(response.status).toBe(405);
+      expect(response.body.message).toBe(
+        "Method GET not allowed on /submit route"
+      );
+    });
+  
+    it("should return 405 for POST request on /:id route", async () => {
+      const response = await request(app).post(`/api/quizzes/${123}`);
+      expect(response.status).toBe(405);
+      expect(response.body.message).toBe(
+        "Method POST not allowed on this route"
+      );
+    });
+  
+    it("should return 405 for POST request on userinfo route", async () => {
+      const response = await request(app).post(`/api/quizzes/${123}`);
+      expect(response.status).toBe(405);
+      expect(response.body.message).toBe("Method POST not allowed on this route");
+    });
+  
+    it("should return 405 for POST request on /:id/leaderboard route", async () => {
+      const response = await request(app).post(`/api/quizzes/${123}/leaderboard`);
+      expect(response.status).toBe(405);
+      expect(response.body.message).toBe("Method POST not allowed on this route");
+    });
+  });
+  

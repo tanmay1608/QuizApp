@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { userModel } from "../models/userModel.js";
 import { authenticate } from "../middelwares/auth.js";
+import { quizModel } from "../models/quizModel.js";
 
 let mongoServer;
 jest.mock("../middelwares/auth.js");
@@ -66,7 +67,7 @@ describe("POST /register", () => {
       name: "test user",
       address: "test user",
     });
-    console.log(response.body.message);
+
     expect(response.status).toBe(201);
     expect(response.body.message).toBe("User created successfully");
   });
@@ -158,19 +159,6 @@ describe("logout", () => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe("Logged out successfully");
   });
-
-  // it.only('should return 500 if log out fail',async ()=>{
-
-  //     const res={
-  //         clearCookie:jest.fn(),
-  //     }
-  //     jest.spyOn(res, "clearCookie").mockImplementation(() => {
-  //         throw new Error("Error occurred");
-  //     });
-  //     const response=await request(app).post("/api/user/logout").send({});
-  //     expect(response.status).toBe(500);
-  //     expect(response.body.message).toBe("Logout failed. Please try again.");
-  // })
 });
 
 describe("userInfo", () => {
@@ -182,13 +170,69 @@ describe("userInfo", () => {
     expect(response.body.message).toBe("User not found");
   });
 
-  it("should return 200 if user info fecthed successfully", async () => {
+  it("should return 200 if user info fecthed successfully with quizzes", async () => {
+    const quiz1 = await quizModel.create({
+      title: "test title1",
+      category: "test category",
+      questions: [
+        {
+          questionText: "test question",
+          options: ["1", "2", "3", "4"],
+          correctOption: "1",
+        },
+      ],
+    });
+    const quiz2 = await quizModel.create({
+      title: "test title2",
+      category: "test category",
+      questions: [
+        {
+          questionText: "test question",
+          options: ["1", "2", "3", "4"],
+          correctOption: "1",
+        },
+      ],
+    });
     const user = await userModel.create({
       email: "test2@example.com",
       password: "hashedPassword",
       address: "test address",
       role: "user",
       name: "test user",
+      quizzesTaken: [
+        {
+          quizId: quiz1._id,
+          score: 4,
+        },
+        {
+          quizId: quiz2._id,
+          score: 5,
+        },
+      ],
+    });
+
+    const response = await request(app).get(`/api/user/${user._id}`);
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe("User information fetched successfully");
+  });
+
+  it("should return 200 if user info fecthed successfully without quizzes", async () => {
+    const user = await userModel.create({
+      email: "test2@example.com",
+      password: "hashedPassword",
+      address: "test address",
+      role: "user",
+      name: "test user",
+      quizzesTaken: [
+        {
+          quizId: new mongoose.Types.ObjectId(),
+          score: 4,
+        },
+        {
+          quizId: new mongoose.Types.ObjectId(),
+          score: 5,
+        },
+      ],
     });
 
     const response = await request(app).get(`/api/user/${user._id}`);
@@ -217,8 +261,56 @@ describe("verify user role", () => {
   });
 
   it("should return 200 if user is verfied", async () => {
-    const response = await request(app).post("/api/user/").send({});
-    expect(response.status).toBe(400);
-    expect(response.body.message).toBe("role is not defined");
+    const response = await request(app)
+      .post("/api/user/")
+      .send({ role: "user" });
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe("user verfied");
+  });
+
+  it("should return 401 if user is not verfied", async () => {
+    const response = await request(app)
+      .post("/api/user/")
+      .send({ role: "admin" });
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe("user is not verfied");
+  });
+});
+
+describe("route method not allowed", () => {
+  it("should return 405 for GET request on register route", async () => {
+    const response = await request(app).get("/api/user/register");
+    expect(response.status).toBe(405);
+    expect(response.body.message).toBe(
+      "Method GET not allowed on /register route"
+    );
+  });
+
+  it("should return 405 for GET request on login route", async () => {
+    const response = await request(app).get("/api/user/login");
+    expect(response.status).toBe(405);
+    expect(response.body.message).toBe(
+      "Method GET not allowed on /login route"
+    );
+  });
+
+  it("should return 405 for GET request on logout route", async () => {
+    const response = await request(app).get("/api/user/logout");
+    expect(response.status).toBe(405);
+    expect(response.body.message).toBe(
+      "Method GET not allowed on /logout route"
+    );
+  });
+
+  it("should return 405 for GET request on userinfo route", async () => {
+    const response = await request(app).post(`/api/user/${123}`);
+    expect(response.status).toBe(405);
+    expect(response.body.message).toBe("Method POST not allowed on this route");
+  });
+
+  it("should return 405 for GET request on / route", async () => {
+    const response = await request(app).get(`/api/user/`);
+    expect(response.status).toBe(405);
+    expect(response.body.message).toBe("Method GET not allowed on this route");
   });
 });

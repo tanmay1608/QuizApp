@@ -99,18 +99,21 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  
   try {
     res.clearCookie("authToken");
     res.status(200).json({ message: "Logged out successfully", success: true });
   } catch (error) {
-    res.status(500).json({message :"Logout failed. Please try again." ,error: error.message, success: false });
+    res.status(500).json({
+      message: "Logout failed. Please try again.",
+      error: error.message,
+      success: false,
+    });
   }
 };
 
 export const userInfo = async (req, res) => {
   const { id } = req.params;
-  console.log("id",id);
+  console.log("id", id);
   try {
     const user = await userModel.findById(id);
     console.log(user);
@@ -119,6 +122,7 @@ export const userInfo = async (req, res) => {
 
     const promiseArray = user.quizzesTaken.map(async (quiz) => {
       const quizData = await quizModel.findById(quiz.quizId);
+      console.log("data", quizData);
       if (!quizData) return null;
 
       const { title, category, _id } = quizData;
@@ -151,28 +155,37 @@ export const userInfo = async (req, res) => {
       user: updatedUser,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message: "Failed to fetch user",
-        success: false,
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: "Failed to fetch user",
+      success: false,
+      error: error.message,
+    });
   }
 };
 
-export const verifyUserRole= async (req,res)=>{
-  const {role}=req.body;
-  if(!role) return res.status(400).json({message:"role is not defined", success:false});
-  const user=req.user;
-   
-   try {
-    if(req.user.role === req.body.role) {return res.status(200).json({message:"user verfied",isVerfied:true,success:true})}
-   else{ 
-    res.clearCookie("authToken");
-    return res.status(200).json({message:"user is not verfied",isVerfied:false,success:true})
-  }
-   } catch (error) {
+export const verifyUserRole = async (req, res) => {
+  const { role } = req.body;
+  console.log("role", role);
+  if (!role)
+    return res
+      .status(400)
+      .json({ message: "role is not defined", success: false });
+  const user = req.user;
+
+  try {
+    if (req.user.role === req.body.role) {
+      return res
+        .status(200)
+        .json({ message: "user verfied", isVerfied: true, success: true });
+    } else {
+      res.clearCookie("authToken");
+      return res.status(401).json({
+        message: "user is not verfied",
+        isVerfied: false,
+        success: false,
+      });
+    }
+  } catch (error) {
     res.status(500).json({ error: error.message, success: false });
-   }
-}
+  }
+};
