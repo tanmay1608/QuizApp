@@ -3,9 +3,9 @@ import mongoose from "mongoose";
 import { app } from "./serverForTesting.js";
 import bcrypt from "bcryptjs";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import { userModel } from "../models/userModel.js";
+import { User } from "../models/userModel.js";
 import { authenticate } from "../middelwares/auth.js";
-import { quizModel } from "../models/quizModel.js";
+import { Quiz } from "../models/quizModel.js";
 
 let mongoServer;
 jest.mock("../middelwares/auth.js");
@@ -41,7 +41,7 @@ describe("POST /register", () => {
   });
 
   it("should return 400 if user already exist ", async () => {
-    await userModel.create({
+    await User.create({
       email: "test@example.com",
       password: "hashedpassword",
       address: "test address",
@@ -73,7 +73,7 @@ describe("POST /register", () => {
   });
 
   it("should return 500 if registration fail", async () => {
-    jest.spyOn(userModel, "findOne").mockImplementationOnce(() => {
+    jest.spyOn(User, "findOne").mockImplementationOnce(() => {
       throw new Error("Database connection error");
     });
     const response = await request(app).post("/api/user/register").send({
@@ -107,7 +107,7 @@ describe("POST /login", () => {
 
   it("should return 401 if password miss match", async () => {
     const hashedPassword = await bcrypt.hash("test123", 10);
-    await userModel.create({
+    await User.create({
       email: "test@example.com",
       password: hashedPassword,
       address: "test address",
@@ -124,7 +124,7 @@ describe("POST /login", () => {
 
   it("should return 200 if login successful", async () => {
     const hashedPassword = await bcrypt.hash("test123", 10);
-    const user = await userModel.create({
+    const user = await User.create({
       email: "test1@example.com",
       password: hashedPassword,
       address: "test address",
@@ -141,7 +141,7 @@ describe("POST /login", () => {
   });
 
   it("should return 500 if login fail", async () => {
-    jest.spyOn(userModel, "findOne").mockImplementationOnce(() => {
+    jest.spyOn(User, "findOne").mockImplementationOnce(() => {
       throw new Error("Database connection error");
     });
     const response = await request(app)
@@ -171,7 +171,7 @@ describe("userInfo", () => {
   });
 
   it("should return 200 if user info fecthed successfully with quizzes", async () => {
-    const quiz1 = await quizModel.create({
+    const quiz1 = await Quiz.create({
       title: "test title1",
       category: "test category",
       questions: [
@@ -182,7 +182,7 @@ describe("userInfo", () => {
         },
       ],
     });
-    const quiz2 = await quizModel.create({
+    const quiz2 = await Quiz.create({
       title: "test title2",
       category: "test category",
       questions: [
@@ -193,7 +193,7 @@ describe("userInfo", () => {
         },
       ],
     });
-    const user = await userModel.create({
+    const user = await User.create({
       email: "test2@example.com",
       password: "hashedPassword",
       address: "test address",
@@ -217,7 +217,7 @@ describe("userInfo", () => {
   });
 
   it("should return 200 if user info fecthed successfully without quizzes", async () => {
-    const user = await userModel.create({
+    const user = await User.create({
       email: "test2@example.com",
       password: "hashedPassword",
       address: "test address",
@@ -241,7 +241,7 @@ describe("userInfo", () => {
   });
 
   it("should return 500 if failed to fetch user", async () => {
-    jest.spyOn(userModel, "findById").mockImplementationOnce(() => {
+    jest.spyOn(User, "findById").mockImplementationOnce(() => {
       throw new Error("Database connection error");
     });
 

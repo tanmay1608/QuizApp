@@ -1,20 +1,20 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { PORT } from "../utils/constants";
 
 const Quiz = () => {
   const quizData = useLoaderData();
-  const id=quizData._id;
+  const id = quizData._id;
   const savedUser = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showToastify,setShowToastify]=useState(false);
+  const [showToastify, setShowToastify] = useState(false);
   const currentQuestion = quizData.questions[currentQuestionIndex];
 
   const notify = () => toast("Quiz submitted successfully!");
@@ -36,12 +36,11 @@ const Quiz = () => {
     const score = calculateScore();
     try {
       await axios.post(`http://localhost:${PORT}/api/quizzes/submit`, {
-        userId:savedUser?.id,
+        userId: savedUser?.id,
         quizId: id,
-        score:score
+        score: score,
       });
       notify();
-      console.log("Quiz submitted successfully.");
     } catch (error) {
       console.error("Error submitting quiz:", error);
     }
@@ -58,7 +57,7 @@ const Quiz = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <ToastContainer/>
+      <ToastContainer />
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
         {quizData.title}
       </h1>
@@ -84,7 +83,7 @@ const Quiz = () => {
               <div key={option} className="flex items-center">
                 <input
                   type="radio"
-                  name={`question-${currentQuestionIndex}`} 
+                  name={`question-${currentQuestionIndex}`}
                   value={option}
                   checked={answers[currentQuestion._id] === option}
                   onChange={() => handleOptionSelect(option)}

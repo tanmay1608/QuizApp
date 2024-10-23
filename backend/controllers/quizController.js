@@ -1,5 +1,5 @@
-import { quizModel } from "../models/quizModel.js";
-import { userModel } from "../models/userModel.js";
+import { Quiz } from "../models/quizModel.js";
+import { User } from "../models/userModel.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const createQuiz = async (req, res) => {
@@ -13,7 +13,7 @@ export const createQuiz = async (req, res) => {
   }
 
   try {
-    const existingQuiz = await quizModel.findOne({ title });
+    const existingQuiz = await Quiz.findOne({ title });
     if (existingQuiz) {
       return res.status(409).json({
         success: false,
@@ -21,7 +21,7 @@ export const createQuiz = async (req, res) => {
       });
     }
 
-    const quiz = await quizModel.create({
+    const quiz = await Quiz.create({
       title,
       category,
       questions,
@@ -41,7 +41,7 @@ export const createQuiz = async (req, res) => {
 
 export const getAllQuizzes = async (req, res) => {
   try {
-    const quizzes = await quizModel.find({});
+    const quizzes = await Quiz.find({});
     res.status(200).json({
       message: "Quizzes fetched successfully",
       quizzes: quizzes,
@@ -61,7 +61,7 @@ export const getQuizById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const quiz = await quizModel.findById(id);
+    const quiz = await Quiz.findById(id);
 
     if (!quiz) {
       return res
@@ -85,10 +85,10 @@ export const getQuizById = async (req, res) => {
 
 export const deleteQuizById = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
+
   try {
-    const quiz = await quizModel.deleteOne({ _id: id });
-    console.log("quiz",quiz);
+    const quiz = await Quiz.deleteOne({ _id: id });
+
     if (quiz.deletedCount === 0) {
       return res
         .status(404)
@@ -111,7 +111,7 @@ export const submitQuiz = async (req, res) => {
   const { userId, quizId, score } = req.body;
 
   try {
-    const user = await userModel.findById(userId);
+    const user = await User.findById(userId);
     if (!user) {
       return res
         .status(404)
@@ -125,7 +125,7 @@ export const submitQuiz = async (req, res) => {
 
     await user.save();
 
-    const quiz = await quizModel.findById(quizId);
+    const quiz = await Quiz.findById(quizId);
     if (!quiz) {
       return res
         .status(404)
@@ -142,7 +142,6 @@ export const submitQuiz = async (req, res) => {
       .status(200)
       .json({ message: "Quiz submitted successfully", success: true });
   } catch (error) {
-    
     res.status(500).json({
       message: "Failed to submit quiz",
       success: false,
@@ -153,13 +152,11 @@ export const submitQuiz = async (req, res) => {
 
 export const getLeaderboard = async (req, res) => {
   const { id } = req.params;
-  
+
   try {
-    const quiz = await quizModel.findById(id);
+    const quiz = await Quiz.findById(id);
     if (!quiz)
       return res.status(404).json({ message: "Quiz not found", success: true });
-
-    console.log("quiz taken By",quiz.takenBy);
 
     const leaderboard = quiz.takenBy.map(async (user) => {
       const existingUser = await getUser(user.userId);
@@ -198,7 +195,7 @@ export const getLeaderboard = async (req, res) => {
 };
 
 const getUser = async (id) => {
-  const existingUser = await userModel.findById(id);
-  console.log(existingUser);
+  const existingUser = await User.findById(id);
+
   return existingUser;
 };

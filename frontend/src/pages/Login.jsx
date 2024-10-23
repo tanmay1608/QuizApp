@@ -1,48 +1,40 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../redux/slice/userSlice";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-  
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   //const [error, setError] = useState("");
   const navigate = useNavigate();
-  const dispatch=useDispatch();
-  const {error,success}=useSelector((state)=> state.user);
-  
-  useEffect(()=>{
-    if(success){
+  const dispatch = useDispatch();
+  const { error, success } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (success) {
       navigate("/");
     }
-  },[success])
+  }, [success]);
 
-  
-
-  
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      console.log(email, password);
-      dispatch(loginUser({email,password}));
+      dispatch(loginUser({ email, password }));
       //navigate("/");
-    
-    } catch (error) { 
-      console.log(error.message)
-    
-    }
+    } catch (error) {}
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0b0e15]">
-      
       <div className="w-full max-w-md bg-[#181b22] p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-6 text-[#f89f2b]">Login</h2>
+        <h2 className="text-2xl font-bold text-center mb-6 text-[#f89f2b]">
+          Login
+        </h2>
         {error && (
           <div className="bg-red-100 text-red-600 p-2 mb-4 rounded">
             {error}

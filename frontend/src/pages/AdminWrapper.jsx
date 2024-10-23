@@ -6,11 +6,14 @@ const AdminWrapper = () => {
   const savedUser = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
-    console.log(savedUser)
-    const isVerfied=useLoaderData();
-    console.log("isVerified",isVerfied);   
 
-  return  isVerfied && savedUser?.role === "admin" ? <Outlet /> : <Navigate to={"/login"} />;
+  const isVerfied = useLoaderData();
+
+  return isVerfied && savedUser?.role === "admin" ? (
+    <Outlet />
+  ) : (
+    <Navigate to={"/login"} />
+  );
 };
 
 export default AdminWrapper;

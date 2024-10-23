@@ -19,12 +19,9 @@ const Admin = () => {
           `http://localhost:${PORT}/api/quizzes`
         );
         setQuizzesData(quizzesData.data.quizzes);
-        console.log("data", quizzesData);
       };
       fetchData();
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }, []);
 
   const handleStartQuiz = (quizId) => {
@@ -60,7 +57,6 @@ const Admin = () => {
 
       // groupedQuizzes[selectedCategory];
       // setSelectedCategory(null);
-      console.log("Quiz deleted successfully:", id);
     } catch (error) {
       console.error("Error deleting quiz:", error);
     }

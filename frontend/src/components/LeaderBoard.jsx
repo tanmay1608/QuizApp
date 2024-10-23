@@ -1,16 +1,13 @@
-import { useLoaderData, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { FaCrown } from "react-icons/fa"; // Crown icon for #1 rank
+import { useLoaderData} from "react-router-dom";
+import { FaCrown } from "react-icons/fa"; 
 
 const LeaderBoard = () => {
-  const params = useParams();
   const leaderboardData = useLoaderData();
   const quizInfo = leaderboardData[1]?.value?.data.quiz;
   const leaderboardInfo = leaderboardData[0]?.value?.data.leaderboard;
   const user = localStorage.getItem("user");
   let currentUserEmail = null;
   if (user) currentUserEmail = JSON.parse(user).email;
-  console.log(leaderboardInfo[0]);
 
   return (
     <div className="w-full h-screen flex justify-center items-start pt-12 bg-gradient-to-b from-gray-100 to-gray-300">

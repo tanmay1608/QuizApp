@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { JWT_SECRET } from "../utils/constants.js";
-import { userModel } from "../models/userModel.js";
-import { quizModel } from "../models/quizModel.js";
+import { User } from "../models/userModel.js";
+import { Quiz } from "../models/quizModel.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const register = async (req, res) => {
@@ -13,38 +13,53 @@ export const register = async (req, res) => {
       .json({ message: "All fields are required", success: false });
   }
 
-  const emailValid =email.includes('@') && email.split('@').length - 1 === 1;
-  const dotSymbolIndex = email.indexOf('.');
+  const emailValid = email.includes("@") && email.split("@").length - 1 === 1;
+  const dotSymbolIndex = email.indexOf(".");
   if (!emailValid) {
-    return res.status(400).json({ error: `Email must contain only one @ symbol` });
+    return res
+      .status(400)
+      .json({ error: `Email must contain only one @ symbol` });
   }
-  if (dotSymbolIndex === -1 || dotSymbolIndex === 0 || dotSymbolIndex === email.length - 1 || email.lastIndexOf('.') !== dotSymbolIndex) {
-    return res.status(400).json({ error: 'Email must contain only one . symbol and it cannot be at the start or end' });
-  }
-  
-  if (password.length < 8) {
-    return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+  if (
+    dotSymbolIndex === -1 ||
+    dotSymbolIndex === 0 ||
+    dotSymbolIndex === email.length - 1 ||
+    email.lastIndexOf(".") !== dotSymbolIndex
+  ) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "Email must contain only one . symbol and it cannot be at the start or end",
+      });
   }
 
-  
+  if (password.length < 8) {
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 8 characters long" });
+  }
+
   const nameValid = /^[A-Za-z\s]+$/.test(name);
   if (!nameValid) {
-    return res.status(400).json({ error: 'Name can only contain letters and spaces' });
+    return res
+      .status(400)
+      .json({ error: "Name can only contain letters and spaces" });
   }
 
   try {
-    const existingUser = await userModel.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser)
       return res
         .status(400)
         .json({ message: "User already exists", success: false });
 
-    const userCount = await userModel.countDocuments();
+    const userCount = await User.countDocuments();
     const role = userCount === 0 ? "admin" : "user";
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await userModel.create({
+    const user = await User.create({
       email,
       password: hashedPassword,
       address,
@@ -66,15 +81,15 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  console.log("inside login");
+
   if (!email || !password) {
     return res
       .status(400)
       .json({ message: "All fields are required", success: false });
   }
   try {
-    const user = await userModel.findOne({ email });
-    console.log(user);
+    const user = await User.findOne({ email });
+
     if (!user) {
       return res
         .status(404)
@@ -132,16 +147,16 @@ export const logout = async (req, res) => {
 
 export const userInfo = async (req, res) => {
   const { id } = req.params;
-  console.log("id", id);
+
   try {
-    const user = await userModel.findById(id);
-    console.log(user);
+    const user = await User.findById(id);
+
     if (!user)
       return res.status(400).json({ message: "User not found", success: true });
 
     const promiseArray = user.quizzesTaken.map(async (quiz) => {
-      const quizData = await quizModel.findById(quiz.quizId);
-      console.log("data", quizData);
+      const quizData = await Quiz.findById(quiz.quizId);
+
       if (!quizData) return null;
 
       const { title, category, _id } = quizData;
@@ -184,7 +199,7 @@ export const userInfo = async (req, res) => {
 
 export const verifyUserRole = async (req, res) => {
   const { role } = req.body;
-  console.log("role", role);
+
   if (!role)
     return res
       .status(400)

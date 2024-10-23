@@ -10,7 +10,6 @@ import { PORT } from "../utils/constants";
 const Quizzes = () => {
   const quizzesData = useLoaderData();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
   const [searchInput, setSearchInput] = useState("");
   const dispatch = useDispatch();
   const { success } = useSelector((state) => state.user);
@@ -29,7 +28,6 @@ const Quizzes = () => {
     }
   }, [savedUser]);
 
-  console.log(success);
   useEffect(() => {
     if (success) {
       notify(success);
@@ -47,7 +45,7 @@ const Quizzes = () => {
           );
           setUserInfo(userData.data.user);
         } catch (error) {
-          console.log(error);
+          console.log(error.message)
         }
       };
       fetchUser();
@@ -111,7 +109,7 @@ const Quizzes = () => {
       </div>
 
       <div className="mb-6 flex justify-center flex-wrap items-center ">
-        {Object.keys(filteredList).map((category, index) => (
+        {Object.keys(filteredList).map((category) => (
           <div
             key={category}
             className={`w-40 mx-2 h-32  rounded-lg shadow-md  bg-[#19b4fa] mb-10 hover:scale-105 transition-all duration-300 ease-in-out flex items-center`}

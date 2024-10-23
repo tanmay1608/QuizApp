@@ -2,8 +2,8 @@ import request from "supertest";
 import mongoose from "mongoose";
 import { app } from "./serverForTesting.js";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import { userModel } from "../models/userModel.js";
-import { quizModel } from "../models/quizModel.js";
+import { User } from "../models/userModel.js";
+import { Quiz } from "../models/quizModel.js";
 import { authenticate, authorize } from "../middelwares/auth.js";
 
 let mongoServer;
@@ -47,7 +47,7 @@ describe("create quiz", () => {
   });
 
   it("should return 409 if quiz already exists", async () => {
-    await quizModel.create({
+    await Quiz.create({
       title: "test title",
       category: "test category",
       questions: [
@@ -95,7 +95,7 @@ describe("create quiz", () => {
   });
 
   it("should return 500 if failed to create quiz", async () => {
-    jest.spyOn(quizModel, "findOne").mockImplementationOnce(() => {
+    jest.spyOn(Quiz, "findOne").mockImplementationOnce(() => {
       throw new Error("Database connection error");
     });
     const response = await request(app)
@@ -125,7 +125,7 @@ describe("get all quizzes", () => {
   });
 
   it("should return 500 if failed to fetch quizzes", async () => {
-    jest.spyOn(quizModel, "find").mockImplementationOnce(() => {
+    jest.spyOn(Quiz, "find").mockImplementationOnce(() => {
       throw new Error("db error");
     });
     const response = await request(app).get("/api/quizzes/");
@@ -145,7 +145,7 @@ describe("get quiz by id", () => {
 
   it("should return 200 if quiz fetched successfully", async () => {
     
-   const quiz= await quizModel.create({
+   const quiz= await Quiz.create({
         title: "test title 2",
         category: "test category",
         questions: [
@@ -163,7 +163,7 @@ describe("get quiz by id", () => {
   });
 
   it("should return 500 if failed to fetch quiz", async () => {
-    jest.spyOn(quizModel, "findById").mockImplementationOnce(() => {
+    jest.spyOn(Quiz, "findById").mockImplementationOnce(() => {
       throw new Error("db error");
     });
     const response = await request(app).get(`/api/quizzes/${new mongoose.Types.ObjectId()}`);
@@ -183,14 +183,14 @@ describe("delete quiz by id", () => {
   
     it("should return 200 if quiz fetched successfully", async () => {
       
-      const quiz=await quizModel.findOne();
+      const quiz=await Quiz.findOne();
       const response = await request(app).delete(`/api/quizzes/${quiz._id}`);
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Quiz deleted successfuly");
     });
   
     it("should return 500 if failed to delete quiz", async () => {
-      jest.spyOn(quizModel, "deleteOne").mockImplementationOnce(() => {
+      jest.spyOn(Quiz, "deleteOne").mockImplementationOnce(() => {
         throw new Error("db error");
       });
       const response = await request(app).delete(`/api/quizzes/${new mongoose.Types.ObjectId()}`);
@@ -211,7 +211,7 @@ describe("submit quiz", () => {
   
     it("should return 404 if quiz not found", async () => {
 
-      const user=await userModel.create({
+      const user=await User.create({
         email: "testsubmit@example.com",
         password: "hashedPassword",
         address: "test address",
@@ -228,9 +228,9 @@ describe("submit quiz", () => {
 
     it("should return 200 if quiz submitted successfully", async () => {
 
-      const user=await userModel.findOne();
+      const user=await User.findOne();
       
-      const quiz=await quizModel.create({
+      const quiz=await Quiz.create({
         title: "test title2",
         category: "test category",
         questions: [
@@ -252,10 +252,10 @@ describe("submit quiz", () => {
   
     it("should return 500 if failed to submit quiz", async () => {
 
-      const user=await userModel.findOne();
-      const quiz=await quizModel.findOne();
+      const user=await User.findOne();
+      const quiz=await Quiz.findOne();
      
-      jest.spyOn(quizModel, "findById").mockImplementationOnce(() => {
+      jest.spyOn(Quiz, "findById").mockImplementationOnce(() => {
         throw new Error("db error");
       });
       const response = await request(app).post(`/api/quizzes/submit`).send({userId:user._id, quizId:quiz._id, score:4 })
@@ -279,8 +279,8 @@ describe("get leaderboard", () => {
 
     it("should return 200 if leaderboard fetched successfully", async () => {
 
-      const user=await userModel.findOne();
-      const quiz=await quizModel.create({
+      const user=await User.findOne();
+      const quiz=await Quiz.create({
         title: "test title3",
         category: "test category",
         questions: [
@@ -304,8 +304,8 @@ describe("get leaderboard", () => {
     it("should return 500 if failed to fetch leaderboard", async () => {
 
      
-      const quiz=await quizModel.findOne();
-      jest.spyOn(quizModel, "findById").mockImplementationOnce(() => {
+      const quiz=await Quiz.findOne();
+      jest.spyOn(Quiz, "findById").mockImplementationOnce(() => {
         throw new Error("db error");
       });
 

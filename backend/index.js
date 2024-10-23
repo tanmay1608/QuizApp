@@ -12,9 +12,7 @@ let server;
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      callback(null, origin);
-    },
+    origin: '*',
     credentials: true,
   })
 );
