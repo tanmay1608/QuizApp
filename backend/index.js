@@ -48,4 +48,4 @@ export const connectDBAndStartServer = async () => {
   }
 };
 
-//connectDBAndStartServer();
+connectDBAndStartServer();

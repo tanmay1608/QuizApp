@@ -13,6 +13,25 @@ export const register = async (req, res) => {
       .json({ message: "All fields are required", success: false });
   }
 
+  const emailValid =email.includes('@') && email.split('@').length - 1 === 1;
+  const dotSymbolIndex = email.indexOf('.');
+  if (!emailValid) {
+    return res.status(400).json({ error: `Email must contain only one @ symbol` });
+  }
+  if (dotSymbolIndex === -1 || dotSymbolIndex === 0 || dotSymbolIndex === email.length - 1 || email.lastIndexOf('.') !== dotSymbolIndex) {
+    return res.status(400).json({ error: 'Email must contain only one . symbol and it cannot be at the start or end' });
+  }
+  
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+  }
+
+  
+  const nameValid = /^[A-Za-z\s]+$/.test(name);
+  if (!nameValid) {
+    return res.status(400).json({ error: 'Name can only contain letters and spaces' });
+  }
+
   try {
     const existingUser = await userModel.findOne({ email });
     if (existingUser)

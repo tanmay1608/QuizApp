@@ -1,6 +1,6 @@
 import request from "supertest";
 import mongoose from "mongoose";
-import { app } from "../index.js";
+import { app } from "./serverForTesting.js";
 import bcrypt from "bcryptjs";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { userModel } from "../models/userModel.js";

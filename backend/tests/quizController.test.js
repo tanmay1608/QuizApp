@@ -1,12 +1,9 @@
 import request from "supertest";
 import mongoose from "mongoose";
-import { app } from "../index.js";
+import { app } from "./serverForTesting.js";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { userModel } from "../models/userModel.js";
 import { quizModel } from "../models/quizModel.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../utils/constants.js";
 import { authenticate, authorize } from "../middelwares/auth.js";
 
 let mongoServer;
