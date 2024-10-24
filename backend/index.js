@@ -12,7 +12,7 @@ let server;
 
 app.use(
   cors({
-    origin: '*',
+    origin: true,
     credentials: true,
   })
 );
@@ -21,17 +21,7 @@ app.use(cookieParser());
 app.use("/api/user", userAuthRoutes);
 app.use("/api/quizzes", quizRoutes);
 
-app.use((req, res) => {
-  res.status(404).json({ message: "Endpoint not found", success: false });
-});
 
-app.use((err, req, res, next) => {
-  console.error("Internal Server Error:", err);
-  res.status(500).json({
-    message: "Something went wrong",
-    success: false,
-  });
-});
 
 export const connectDBAndStartServer = async () => {
   console.log("Attempting to connect to the database and start the server...");

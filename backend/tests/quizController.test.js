@@ -39,7 +39,7 @@ beforeEach(async () => {
 
 describe("create quiz", () => {
   it("should return 400 if any field is miising", async () => {
-    const response = await request(app).post("/api/quizzes/").send({});
+    const response = await request(app).post("/api/quizzes/create-quiz").send({});
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
       "Title, category, and questions are required."
@@ -60,7 +60,7 @@ describe("create quiz", () => {
     });
 
     const response = await request(app)
-      .post("/api/quizzes/")
+      .post("/api/quizzes/create-quiz")
       .send({
         title: "test title",
         category: "test category",
@@ -78,7 +78,7 @@ describe("create quiz", () => {
 
   it("should return 201 if quiz created successfully", async () => {
     const response = await request(app)
-      .post("/api/quizzes/")
+      .post("/api/quizzes/create-quiz")
       .send({
         title: "test title new",
         category: "test category",
@@ -99,7 +99,7 @@ describe("create quiz", () => {
       throw new Error("Database connection error");
     });
     const response = await request(app)
-      .post("/api/quizzes/")
+      .post("/api/quizzes/create-quiz")
       .send({
         title: "title",
         category: "test category",

@@ -82,7 +82,7 @@ const AddQuiz = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:${PORT}/api/quizzes`,
+        `http://localhost:${PORT}/api/quizzes/create-quiz`,
         {
           title: formData.title,
           category: formData.category,

@@ -4,7 +4,7 @@ import { createQuiz, deleteQuizById, getAllQuizzes, getLeaderboard, getQuizById,
 
 const router=express.Router();
 
-router.post("/",authenticate,authorize,createQuiz);
+router.post("/create-quiz",authenticate,authorize,createQuiz);
 router.get("/",getAllQuizzes);
 router.all("/",(req,res)=>{
     return res.status(405).json({message: `Method ${req.method} not allowed on this route`,success:false})
