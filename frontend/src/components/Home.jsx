@@ -4,7 +4,7 @@ import Quizzes from "./Quizzes";
 const Home = () => (
   <div>
    <div className="w-full h-[50vh]  flex flex-col items-center justify-center relative"
-   style={{backgroundColor:"#37808f"}}>
+   >
      <div className="absolute  w-full h-[50vh] flex justify-center">
       <img className="w-full object-cover " src="https://cdn.pixabay.com/photo/2015/12/13/09/40/banner-1090830_1280.jpg"/>
      </div>

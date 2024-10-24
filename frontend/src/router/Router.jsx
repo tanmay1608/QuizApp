@@ -19,6 +19,7 @@ import { fetchUserInfo } from "../loaders/fetchUserInfo"
 import NotFound from "../pages/NotFound"
 import Error from "../pages/Error"
 import { verfiyUserRole } from "../loaders/verfiyUserRole"
+import QuizCategory from "../components/QuizCategory"
 
 const allRoutes=createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const allRoutes=createBrowserRouter([
                 index:true,
                 element:<Home/>,
                 loader:fetchQuizzesData
+            },
+            {
+                path:'category',
+                element:<QuizCategory/>
             },
             {
                 path:'quiz/:id',

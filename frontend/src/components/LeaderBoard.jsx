@@ -10,7 +10,7 @@ const LeaderBoard = () => {
   if (user) currentUserEmail = JSON.parse(user).email;
 
   return (
-    <div className="w-full h-screen flex justify-center items-start pt-12 bg-gradient-to-b from-gray-100 to-gray-300">
+    <div className="w-full min-h-screen pb-10 flex justify-center items-start pt-12 bg-gradient-to-b from-gray-100 to-gray-300">
       {leaderboardInfo.length === 0 ? (
         <div className="text-center bg-white p-6 rounded-md shadow-xl">
           <p className="text-2xl font-semibold text-gray-800">
