@@ -65,7 +65,6 @@ const Register = () => {
             required
             className="w-full px-3 py-2  bg-[#313237] rounded text-white "
           />
-
           <input
             type="email"
             name="email"
@@ -75,7 +74,6 @@ const Register = () => {
             required
             className="w-full px-3 py-2  bg-[#313237] rounded text-white"
           />
-
           <input
             type="password"
             name="password"
@@ -95,10 +93,9 @@ const Register = () => {
             required
             className="w-full px-3 py-2 text-white  rounded bg-[#313237]"
           />
-
           <button
             type="submit"
-            className="w-full py-2   text-[#313237] bg-white rounded hover:bg-[#f89f2b] hover:text-white transition"
+            className="w-full py-2 text-[#313237] bg-white rounded hover:bg-[#f89f2b] hover:text-white transition"
           >
             Register
           </button>

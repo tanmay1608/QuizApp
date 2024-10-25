@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { PORT } from "../utils/constants";
@@ -53,6 +53,21 @@ const Quiz = () => {
       .length;
   };
 
+  const finalScore=calculateScore();
+
+  const evaluateScore=()=> {
+    const totalQuestions = quizData.questions.length;
+    const percentage = (finalScore / totalQuestions) * 100;
+  
+    if (percentage < 50) {
+      return "Better luck next time!";
+    } else if (percentage >= 50 && percentage < 80) {
+      return "Good job! You scored";
+    } else {
+      return "Bravo! You have scored";
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#0b0e15] p-6 relative">
       <ToastContainer />
@@ -61,7 +76,7 @@ const Quiz = () => {
         alt="Background"
         className="absolute w-[90%] h-[95%] object-cover top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
       />
-      <h1 className="text-3xl font-bold text-center text-white mb-8 relative z-10">
+      <h1 className="text-3xl font-bold text-center text-white my-8 relative z-10">
         {!isSubmitted && quizData.title}
       </h1>
       <h2 className="text-xl text-center text-white mb-4 z-10 relative">
@@ -69,13 +84,16 @@ const Quiz = () => {
       </h2>
 
       {isSubmitted ? (
-        
-
           <div className="w-[50%] h-[50%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 absolute flex flex-col justify-center items-center">
-            <h2 className="text-4xl font-bold mb-4 text-[#383527] ">Bravo! You have Scored</h2>
+            <h2 className="text-4xl font-bold mb-4 text-[#383527] ">{evaluateScore()}</h2>
             <p className="text-9xl text-white font-bold italic">
-              {calculateScore()} / {quizData.questions.length}
+              {finalScore} / {quizData.questions.length}
             </p>
+            <h2 className=" font-bold  text-[#383527] mt-5 underline">
+              <Link to={"/"}>
+              Explore More
+              </Link>
+            </h2>
           </div>
         
       ) : (

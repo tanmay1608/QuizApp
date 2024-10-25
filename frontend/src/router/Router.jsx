@@ -52,8 +52,6 @@ const allRoutes=createBrowserRouter([
                     }
                     
                 ]
-                
-                
             },
             {
                 path:'admin',

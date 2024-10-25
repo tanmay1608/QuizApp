@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //const [error, setError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { error, success } = useSelector((state) => state.user);
@@ -25,7 +24,6 @@ const Login = () => {
 
     try {
       dispatch(loginUser({ email, password }));
-      //navigate("/");
     } catch (error) {}
   };
 

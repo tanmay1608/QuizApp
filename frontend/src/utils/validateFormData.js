@@ -10,7 +10,7 @@ const validateForm = (formData) => {
     if (!nameRegex.test(name.trim())) 
       return "Name should only contain letters and spaces";
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     if (!emailRegex.test(email)) 
       return "Invalid email format";
 

@@ -19,7 +19,6 @@ const UserMenu = ({ role, handleLogout }) => {
             {
                 isDropdownOpen ?  <MdArrowDropUp className="ml-2 text-xl" /> :  <MdArrowDropDown className="ml-2 text-xl" /> 
             }
-           
           </button>
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">

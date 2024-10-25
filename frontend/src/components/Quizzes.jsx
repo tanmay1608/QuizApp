@@ -7,8 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { toggleSuccess } from "../../redux/slice/userSlice";
 import { PORT } from "../utils/constants";
 import QuizCategoryCard from "./QuizCategoryCard";
-import QuizCategory from "./QuizCategory";
-import { isAction } from "@reduxjs/toolkit";
+
 
 const Quizzes = () => {
   const quizzesData = useLoaderData();
@@ -25,21 +24,12 @@ const Quizzes = () => {
   const [groupedQuizzes, setGroupedQuizzes] = useState({});
   
 
-  // useEffect(() => {
-  //   if (!savedUser) {
-  //     setSelectedCategory(null);
-  //     setUserInfo(null);
-  //   }
-  // }, [savedUser]);
-
   useEffect(() => {
     if (success) {
       notify(success);
       dispatch(toggleSuccess());
     }
   }, [success]);
-
-  console.log(userInfo);
 
   useEffect(() => {
     if (savedUser?.role === "user") {
@@ -101,7 +91,7 @@ const Quizzes = () => {
   };
 
   const quizzesCompletedPercentage = (category) => {
-    console.log(filteredList);
+    
     const totalQuizzes = filteredList[category]?.length || 0;
   
     const attemptedQuizzes = filteredList[category]?.filter((quiz) => {

@@ -2,21 +2,39 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import home from "../assets/home.png";
+import { PORT } from "../utils/constants";
 
 const QuizCategory = () => {
+  const [userInfo, setUserInfo] = useState(null);
   const savedUser = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { filteredList, selectedCategory,userInfo} = location.state;
-  console.log(userInfo);
-
+  const { filteredList, selectedCategory} = location.state;
+  
   const handleStartQuiz = (quizId) => {
     if (savedUser?.role === "user") navigate(`/quiz/${quizId}`);
     else navigate("/login");
   };
+
+  useEffect(() => {
+    if (savedUser?.role === "user") {
+      const fetchUser = async () => {
+        try {
+          const userData = await axios.get(
+            `http://localhost:${PORT}/api/user/${savedUser?.id}`,
+            { withCredentials: true }
+          );
+          setUserInfo(userData.data.user);
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+      fetchUser();
+    }
+  }, []);
 
   return (
     <div className="w-full min-h-screen p-10 relative">
@@ -33,8 +51,7 @@ const QuizCategory = () => {
           const isAttempted = userInfo?.quizzesTaken.find(
             (q) => q?.quiz.id === quiz._id
           );
-          console.log(`Quiz ID: ${quiz._id}, Attempted: ${!!isAttempted}`);
-
+          
           return (
             <div
               key={quiz._id}
